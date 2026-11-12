@@ -3,6 +3,7 @@ import { PageBand } from '../components/layout/PageBand';
 import { ButtonLink } from '../components/ui/Button';
 import { Reveal } from '../components/ui/Reveal';
 import { Seo } from '../components/ui/Seo';
+import { PAGE_KEYWORDS } from '../lib/seoKeywords';
 import { Skeleton } from '../components/ui/Skeleton';
 import { useSite } from '../state/site';
 
@@ -12,8 +13,8 @@ export default function CollectionsPage() {
   return (
     <div className="theme-dark">
       <Seo
-        title="Furniture collections"
-        description="Browse every Mandela Heritage collection: living room, dining, bedroom, office, outdoor and home decor, delivered across Kenya."
+        title={PAGE_KEYWORDS.collections.title}
+        description={PAGE_KEYWORDS.collections.description}
         breadcrumbs={[
           { name: 'Home', path: '/' },
           { name: 'Collections', path: '/categories' },

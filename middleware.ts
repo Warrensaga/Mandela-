@@ -11,6 +11,8 @@
  * Any problem (unknown slug, slow database) falls back to the normal page.
  */
 
+import { categoryKeywords } from './src/lib/seoKeywords';
+
 declare const process: { env: Record<string, string | undefined> };
 
 export const config = {
@@ -63,8 +65,9 @@ async function productMeta(slug: string, store: string): Promise<Meta | null> {
   const min = Number(p.min_price ?? p.price ?? 0);
   const max = Number(p.max_price ?? min);
   const price = min > 0 ? (max > min ? `From ${kes(min)}` : kes(min)) : '';
-  const text = `${price ? `${price} · ` : ''}Delivered across Kenya. ${details[0]?.description ?? ''}`;
-  return { title: `${p.name} | ${store}`, description: clip(text), image: p.primary_image_url, type: 'product', price: min > 0 ? min : undefined };
+  const text = `${p.name} price in Kenya${price ? `: ${price.toLowerCase().startsWith('from') ? price.replace('From', 'from') : price}` : ''}, delivered across Kenya. ${details[0]?.description ?? ''}`;
+  // Same title pattern as the site: "<product> Price in Kenya" (how Kenyans search).
+  return { title: `${p.name} Price in Kenya | Mandela Heritage`, description: clip(text), image: p.primary_image_url, type: 'product', price: min > 0 ? min : undefined };
 }
 
 async function categoryMeta(slug: string, store: string): Promise<Meta | null> {
@@ -73,9 +76,11 @@ async function categoryMeta(slug: string, store: string): Promise<Meta | null> {
   );
   const c = rows[0];
   if (!c) return null;
+  // Same keyword titles and lead sentences as the category pages.
+  const kw = categoryKeywords({ slug, name: c.name });
   return {
-    title: `${c.name} | ${store}`,
-    description: clip(c.description || `Shop ${c.name.toLowerCase()} online in Kenya at ${store}. Crafted in Nairobi, delivered across Kenya.`),
+    title: `${kw.title} | Mandela Heritage`,
+    description: clip(`${kw.lead}. Made in our Nairobi workshop and delivered across Kenya, with fast delivery in Nairobi.`),
     image: c.image_url,
     type: 'website',
   };

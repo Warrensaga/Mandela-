@@ -5,6 +5,7 @@ import { ButtonAnchor, ButtonLink } from '../components/ui/Button';
 import { WhatsAppIcon } from '../components/ui/Icon';
 import { nodeText, Seo } from '../components/ui/Seo';
 import { faqLd } from '../lib/seo';
+import { PAGE_KEYWORDS } from '../lib/seoKeywords';
 import type { DeliveryZone, SiteSettings } from '../lib/api';
 import { formatKES } from '../lib/format';
 import { whatsappLink } from '../lib/whatsapp';
@@ -40,6 +41,7 @@ function Shell({
   description,
   crumb,
   jsonLd,
+  seo,
   children,
 }: {
   eyebrow: string;
@@ -47,14 +49,16 @@ function Shell({
   description: string;
   crumb: string;
   jsonLd?: object;
+  /** Search title/description when they differ from the visible heading. */
+  seo?: { title: string; description: string };
   children: ReactNode;
 }) {
   const { pathname } = useLocation();
   return (
     <>
       <Seo
-        title={title}
-        description={description}
+        title={seo?.title ?? title}
+        description={seo?.description ?? description}
         jsonLd={jsonLd}
         breadcrumbs={[
           { name: 'Home', path: '/' },
@@ -74,7 +78,7 @@ export function DeliveryPage() {
   const { zones, settings } = useSite();
   const free = zones.filter((z) => z.freeThreshold !== null);
   return (
-    <Shell eyebrow="Help" title="Delivery" crumb="Delivery" description="Where we deliver, what it costs and how long it takes. Delivery is within Kenya only.">
+    <Shell eyebrow="Help" title="Delivery" crumb="Delivery" seo={PAGE_KEYWORDS.delivery} description="Where we deliver, what it costs and how long it takes. Delivery is within Kenya only.">
       <h2 className="text-3xl">Delivery areas and fees</h2>
       <p className="mt-3 text-muted">Choose your area at checkout and the fee is added to your order. Estimates are for pieces in stock.</p>
       <div className="mt-6 overflow-x-auto border border-paper-200">
@@ -156,7 +160,7 @@ function PaymentMethods({ payment }: { payment: SiteSettings['payment'] }) {
 export function PaymentPage() {
   const { settings } = useSite();
   return (
-    <Shell eyebrow="Help" title="Payment options" crumb="Payment" description="No payment is taken on this website. We confirm your order first, then you pay by M-Pesa or bank transfer.">
+    <Shell eyebrow="Help" title="Payment options" crumb="Payment" seo={PAGE_KEYWORDS.payment} description="No payment is taken on this website. We confirm your order first, then you pay by M-Pesa or bank transfer.">
       <h2 className="text-3xl">How paying works</h2>
       <ol className="mt-4 space-y-3 text-muted">
         <li><strong className="text-navy-800">1. Place your order online.</strong> Nothing is charged.</li>

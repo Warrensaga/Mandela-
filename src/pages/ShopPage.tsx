@@ -2,6 +2,7 @@ import { useSearchParams } from 'react-router';
 import { PageBand } from '../components/layout/PageBand';
 import { ShopView } from '../components/shop/ShopView';
 import { Seo } from '../components/ui/Seo';
+import { PAGE_KEYWORDS } from '../lib/seoKeywords';
 import { useAsync } from '../hooks/useAsync';
 import { fetchCatalog } from '../lib/api';
 
@@ -14,8 +15,8 @@ export default function ShopPage() {
   return (
     <div className="theme-dark">
       <Seo
-        title={offers ? 'Furniture offers and deals' : 'Shop all furniture'}
-        description="Shop sofas, beds, dining sets and more online in Kenya. Crafted in Nairobi and delivered across Kenya. Filter by room, material, colour and price."
+        title={offers ? PAGE_KEYWORDS.offers.title : PAGE_KEYWORDS.shop.title}
+        description={offers ? PAGE_KEYWORDS.offers.description : PAGE_KEYWORDS.shop.description}
         path="/shop"
         breadcrumbs={[
           { name: 'Home', path: '/' },
