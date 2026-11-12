@@ -30,7 +30,7 @@ Staff accounts are created by **signing up** at `/admin/signup`. A new account h
 
 ## 2. Database additions
 
-The new migration is `supabase/migrations/20261112000600_admin.sql`, already applied to the live project. Every function runs as the signed-in user, so RLS still applies, and each one checks `is_admin()` first.
+The new migration is `supabase/migrations/20261112000058_admin.sql`, already applied to the live project. Every function runs as the signed-in user, so RLS still applies, and each one checks `is_admin()` first.
 
 | Object | Purpose |
 |---|---|
@@ -102,7 +102,7 @@ The new migration is `supabase/migrations/20261112000600_admin.sql`, already app
 
 ## Sign-up and approval (added after Phase 3)
 
-The migration `supabase/migrations/20261112000700_admin_signups.sql` is applied to the live project.
+The migration `supabase/migrations/20261112020842_admin_signups.sql` is applied to the live project.
 
 - **Pending requests:** every new account gets a pending row in `admin_access_requests`, created by a trigger on `auth.users`.
 - **Who sees what:** applicants see only their own row. The owner sees everyone. Nobody can edit the rows directly.

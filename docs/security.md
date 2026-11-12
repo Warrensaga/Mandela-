@@ -13,7 +13,7 @@ Supabase dashboard (they cannot be set from code).
 - Visitors can write only through three functions: `create_order`,
   `submit_custom_request` and `get_order_status`. Prices, totals and stock are
   always recalculated in the database.
-- **Rate limits** (migration `20261112000900_security_hardening.sql`), per hour:
+- **Rate limits** (migration `20261112094508_security_hardening.sql`), per hour:
   | Action | Per IP | Per phone | Site-wide |
   |---|---|---|---|
   | Place an order | 10 | 5 | 120 |

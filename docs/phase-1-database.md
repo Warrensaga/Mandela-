@@ -6,11 +6,11 @@ Supabase Postgres schema, RLS, RPC functions, storage buckets and seed data for 
 
 | File | What it does |
 |---|---|
-| `supabase/migrations/20261112000100_schema.sql` | Enums, all tables, constraints, indexes, `updated_at` triggers, two-level category guard, variant option validation, `normalize_ke_phone()`, `variant_label()` |
-| `supabase/migrations/20261112000200_rls.sql` | `is_admin()` / `is_owner()`, grants, RLS policies on every table, `product_summaries` view |
-| `supabase/migrations/20261112000300_functions.sql` | `create_order`, `get_order_status`, `submit_custom_request`, `adjust_stock`, cancel-restores-stock trigger |
-| `supabase/migrations/20261112000400_storage.sql` | `product-images` (public) and `custom-requests` (private) buckets and policies |
-| `supabase/migrations/20261112000500_hardening.sql` | Advisor follow-ups: foreign-key indexes, role helpers not callable by anon |
+| `supabase/migrations/20261111230816_schema.sql` | Enums, all tables, constraints, indexes, `updated_at` triggers, two-level category guard, variant option validation, `normalize_ke_phone()`, `variant_label()` |
+| `supabase/migrations/20261111230841_rls.sql` | `is_admin()` / `is_owner()`, grants, RLS policies on every table, `product_summaries` view |
+| `supabase/migrations/20261111230935_functions.sql` | `create_order`, `get_order_status`, `submit_custom_request`, `adjust_stock`, cancel-restores-stock trigger |
+| `supabase/migrations/20261111230947_storage.sql` | `product-images` (public) and `custom-requests` (private) buckets and policies |
+| `supabase/migrations/20261111231158_hardening.sql` | Advisor follow-ups: foreign-key indexes, role helpers not callable by anon |
 | `supabase/seed.sql` | Settings, category tree, 4 delivery zones, 4 hero slides, 17 placeholder products (7 with variations, 61 variants), 1 hidden draft product |
 | `supabase/tests/rls_check.sql` | 50 PASS/FAIL checks covering anon, signed-in and admin access plus the order flow. Rolls everything back. |
 
@@ -22,10 +22,10 @@ Use **one** of these options.
 
 In Supabase Dashboard → **SQL Editor**, open a new query for each file below, paste its contents and click **Run**. Keep this order:
 
-1. `supabase/migrations/20261112000100_schema.sql`
-2. `supabase/migrations/20261112000200_rls.sql`
-3. `supabase/migrations/20261112000300_functions.sql`
-4. `supabase/migrations/20261112000400_storage.sql`
+1. `supabase/migrations/20261111230816_schema.sql`
+2. `supabase/migrations/20261111230841_rls.sql`
+3. `supabase/migrations/20261111230935_functions.sql`
+4. `supabase/migrations/20261111230947_storage.sql`
 5. `supabase/seed.sql`
 
 ### Option B: Supabase CLI
