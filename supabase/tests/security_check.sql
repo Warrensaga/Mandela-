@@ -1,5 +1,5 @@
 -- =============================================================================
--- Security hardening check (migration 20261112000900). Run after all
+-- Security hardening check (migration 20261112094508). Run after all
 -- migrations and seed.sql. Everything is rolled back. Every row must be PASS.
 -- =============================================================================
 
