@@ -38,6 +38,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   },
   announcement: { enabled: false, text: '', link: null },
   social: { tiktok: '', instagram: '' },
+  googleReviews: { url: '', rating: null, count: null },
 };
 
 /** Public settings, merged over safe defaults. */
@@ -52,6 +53,9 @@ export async function fetchSettings(): Promise<SiteSettings> {
   const bank = obj(payment.bank);
   const announcement = obj(map.get('announcement_bar'));
   const social = obj(map.get('social'));
+  const google = obj(map.get('google_reviews'));
+  const gRating = Number(google.rating);
+  const gCount = Number(google.count);
   const httpsUrl = (v: unknown) => (typeof v === 'string' && isHttpsUrl(v.trim()) ? v.trim() : '');
   const hours = map.get('opening_hours');
   const deposit = Number(map.get('deposit_percent'));
@@ -87,6 +91,11 @@ export async function fetchSettings(): Promise<SiteSettings> {
       link: safeLink(announcement.link),
     },
     social: { tiktok: httpsUrl(social.tiktok), instagram: httpsUrl(social.instagram) },
+    googleReviews: {
+      url: httpsUrl(google.url),
+      rating: google.rating !== null && gRating >= 1 && gRating <= 5 ? Math.round(gRating * 10) / 10 : null,
+      count: google.count !== null && Number.isInteger(gCount) && gCount > 0 ? gCount : null,
+    },
   };
 }
 
