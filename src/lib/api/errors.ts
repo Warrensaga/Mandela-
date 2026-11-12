@@ -33,6 +33,7 @@ const MESSAGES: Record<string, string> = {
   INVALID_IMAGE_PATH: 'The reference image could not be attached. Please try again.',
   UPLOAD_FAILED: 'We could not upload your image. Please try a smaller JPG or PNG.',
   NOT_FOUND: 'We could not find that.',
+  RATE_LIMITED: 'Too many attempts from this connection. Please wait a little while and try again, or contact us on WhatsApp.',
   NETWORK: 'We could not reach the server. Please check your connection and try again.',
   // Admin
   NOT_AUTHORIZED: 'Your account does not have permission to do that.',

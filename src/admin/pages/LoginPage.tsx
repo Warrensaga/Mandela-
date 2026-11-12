@@ -4,11 +4,49 @@ import { ApiError, sendPasswordReset, signIn } from '../../lib/api/admin';
 import { useAdminSession } from '../auth';
 import { Btn, inputCls, Notice } from '../components/ui';
 
+// Client-side back-off after failed sign-ins: 5 failures lock the form for 60s,
+// doubling with each further failure (max 15 minutes).
+const FAIL_KEY = 'mh-admin-login-failures';
+const FREE_ATTEMPTS = 5;
+
+function readFailures(): { count: number; last: number } {
+  try {
+    const v = JSON.parse(localStorage.getItem(FAIL_KEY) ?? '') as { count?: unknown; last?: unknown };
+    return { count: Number(v.count) || 0, last: Number(v.last) || 0 };
+  } catch {
+    return { count: 0, last: 0 };
+  }
+}
+
+function lockedSeconds(): number {
+  const { count, last } = readFailures();
+  if (count < FREE_ATTEMPTS) return 0;
+  const lockMs = Math.min(60_000 * 2 ** (count - FREE_ATTEMPTS), 15 * 60_000);
+  return Math.max(0, Math.ceil((last + lockMs - Date.now()) / 1000));
+}
+
+function recordFailure() {
+  try {
+    localStorage.setItem(FAIL_KEY, JSON.stringify({ count: readFailures().count + 1, last: Date.now() }));
+  } catch {
+    /* storage unavailable: server-side limits still apply */
+  }
+}
+
+function clearFailures() {
+  try {
+    localStorage.removeItem(FAIL_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
 export default function LoginPage() {
   const session = useAdminSession();
   const [params] = useSearchParams();
   const next = params.get('next');
-  const target = next && next.startsWith('/admin') ? next : '/admin';
+  // Only ever return to an admin page on this site, never an outside address.
+  const target = next && /^\/admin(?:[/?#]|$)/.test(next) ? next : '/admin';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
@@ -20,11 +58,20 @@ export default function LoginPage() {
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    // Supabase Auth also rate-limits sign-ins per IP on the server; this
+    // slows down repeated guessing from the same browser.
+    const wait = lockedSeconds();
+    if (wait > 0) {
+      setError(`Too many failed attempts. Please wait ${wait} seconds and try again.`);
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
       await signIn(email, password);
+      clearFailures();
     } catch (err) {
+      recordFailure();
       setError(err instanceof ApiError ? err.message : 'Could not sign in.');
     } finally {
       setBusy(false);

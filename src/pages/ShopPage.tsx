@@ -14,8 +14,13 @@ export default function ShopPage() {
   return (
     <div className="theme-dark">
       <Seo
-        title={offers ? 'Offers' : 'Shop all furniture'}
-        description="Sofas, beds, dining and more, crafted in Nairobi and delivered across Kenya. Filter by room, material, colour and price."
+        title={offers ? 'Furniture offers and deals' : 'Shop all furniture'}
+        description="Shop sofas, beds, dining sets and more online in Kenya. Crafted in Nairobi and delivered across Kenya. Filter by room, material, colour and price."
+        path="/shop"
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Shop', path: '/shop' },
+        ]}
       />
       <PageBand
         eyebrow={offers ? 'Offers' : 'The shop'}

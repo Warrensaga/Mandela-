@@ -9,6 +9,7 @@ import { mapDirectionsUrl, mapEmbedUrl, mapOpenUrl, showroomLocation } from '../
 import { formatKePhone, normalizeKePhone } from '../lib/phone';
 import { contactMessage, whatsappLink } from '../lib/whatsapp';
 import { SocialLinks } from '../components/layout/SocialLinks';
+import { storeLd } from '../lib/seo';
 import { useSite } from '../state/site';
 
 const SUBJECTS = ['Order enquiry', 'Custom piece', 'Delivery', 'Payment', 'Showroom visit', 'Other'];
@@ -82,15 +83,11 @@ export default function ContactPage() {
       <Seo
         title="Contact us"
         description="Call, WhatsApp or visit the Mandela Heritage Furniture showroom in Nairobi. Opening hours, directions and a contact form."
-        jsonLd={{
-          '@context': 'https://schema.org',
-          '@type': 'FurnitureStore',
-          name: settings.storeName,
-          telephone: phone || undefined,
-          email: settings.contact.email || undefined,
-          address: location.exact ? { '@type': 'PostalAddress', streetAddress: settings.contact.address, addressCountry: 'KE' } : undefined,
-          openingHours: settings.openingHours.map((h) => `${h.days} ${h.hours}`),
-        }}
+        jsonLd={storeLd(settings)}
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Contact', path: '/contact' },
+        ]}
       />
       <PageBand
         tone="light"

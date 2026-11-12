@@ -10,7 +10,7 @@ Read this file fully at the start of every session. Work phase by phase, summari
 
 ## Stack
 - React + Vite + TypeScript (strict), Tailwind CSS, Framer Motion, React Router
-- Supabase: Postgres, Auth, Storage. No custom server.
+- Supabase: Postgres, Auth, Storage. No custom server, except the owner-approved `middleware.ts` (Vercel Routing Middleware) that serves product/category link previews to bots only.
 - Deploy: Vercel
 - Currency KES, phone format +254, delivery in Kenya only
 - Env vars (use `.env.example`, never commit real values): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_WHATSAPP_NUMBER` (format `2547XXXXXXXX`, no plus sign)

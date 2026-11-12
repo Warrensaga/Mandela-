@@ -101,7 +101,14 @@ export default function CustomRequestPage() {
 
   return (
     <div className="container-page max-w-3xl py-10 sm:py-14">
-      <Seo title="Request a custom piece" description="Tell us the size, material and finish you want. Our workshop will quote and build it for you." />
+      <Seo
+        title="Custom furniture in Kenya"
+        description="Request a custom sofa, bed, dining table or any piece in your size, fabric and finish. Our Nairobi workshop will quote and build it for you."
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Custom orders', path: '/custom-request' },
+        ]}
+      />
       <p className="eyebrow">Custom and made to order</p>
       <h1 className="mt-2 text-4xl sm:text-5xl">Request a custom piece</h1>
       <p className="mt-3 text-muted">

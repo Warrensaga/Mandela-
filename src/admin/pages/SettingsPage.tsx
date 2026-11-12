@@ -3,6 +3,7 @@ import { useAsync } from '../../hooks/useAsync';
 import type { Json } from '../../lib/database.types';
 import { ApiError, changePassword, listSettings, saveSettings } from '../../lib/api/admin';
 import { parseCoords } from '../../lib/api/settings';
+import { isHttpsUrl, isSafeLink } from '../../lib/url';
 import { useAdmin } from '../auth';
 import { Btn, Card, inputCls, LabeledField, Loading, Notice, PageHeader, Toggle } from '../components/ui';
 
@@ -65,12 +66,12 @@ function validate(f: Form): string[] {
   if (!/^2547\d{8}$|^2541\d{8}$/.test(f.whatsapp_number)) e.push('WhatsApp number must look like 2547XXXXXXXX (no plus sign or spaces).');
   const dep = Number(f.deposit_percent);
   if (!(dep >= 0 && dep <= 100)) e.push('Deposit percent must be between 0 and 100.');
-  if (f.contact.map_url && !/^https:\/\//.test(f.contact.map_url)) e.push('Map link must start with https://.');
+  if (f.contact.map_url.trim() && !isHttpsUrl(f.contact.map_url.trim())) e.push('Map link must start with https://.');
   if (f.contact.map_coords && !parseCoords(f.contact.map_coords)) e.push('Map coordinates must look like -1.2748849,36.9725608 (latitude,longitude).');
   for (const [name, url] of [['TikTok', f.social.tiktok], ['Instagram', f.social.instagram]] as const) {
-    if (url.trim() && !/^https:\/\//.test(url.trim())) e.push(`${name} link must start with https://.`);
+    if (url.trim() && !isHttpsUrl(url.trim())) e.push(`${name} link must start with https://.`);
   }
-  if (f.announcement.link && !/^(\/|https:\/\/)/.test(f.announcement.link)) e.push('Announcement link must start with / or https://.');
+  if (f.announcement.link.trim() && !isSafeLink(f.announcement.link.trim())) e.push('Announcement link must be a site page starting with / or a full https:// address.');
   return e;
 }
 

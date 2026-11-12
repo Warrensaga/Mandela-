@@ -46,8 +46,15 @@ export default function CategoryPage() {
     <div className="theme-dark">
       <Seo
         title={category.name}
-        description={category.description ?? `Shop ${category.name.toLowerCase()} at Mandela Heritage Furniture. Delivered across Kenya.`}
+        description={category.description ?? `Shop ${category.name.toLowerCase()} online in Kenya at Mandela Heritage Furniture. Crafted in Nairobi, delivered across Kenya.`}
         image={category.imageUrl}
+        path={`/category/${category.slug}`}
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Collections', path: '/categories' },
+          ...(parent ? [{ name: parent.name, path: `/category/${parent.slug}` }] : []),
+          { name: category.name, path: `/category/${category.slug}` },
+        ]}
       />
       <PageBand
         eyebrow={parent ? parent.name : 'Collection'}

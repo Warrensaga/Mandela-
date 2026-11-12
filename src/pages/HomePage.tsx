@@ -16,6 +16,7 @@ import { GridSkeleton } from '../components/ui/Skeleton';
 import { useAsync } from '../hooks/useAsync';
 import { fetchCatalog, fetchHeroSlides } from '../lib/api';
 import { isAvailable, sortProducts } from '../lib/catalog/filters';
+import { storeLd, websiteLd } from '../lib/seo';
 import { useSite } from '../state/site';
 
 export default function HomePage() {
@@ -32,28 +33,7 @@ export default function HomePage() {
 
   return (
     <>
-      <Seo
-        jsonLd={{
-          '@context': 'https://schema.org',
-          '@type': 'FurnitureStore',
-          name: settings.storeName,
-          url: typeof window !== 'undefined' ? window.location.origin : undefined,
-          logo: typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : undefined,
-          telephone: settings.contact.phone || undefined,
-          email: settings.contact.email || undefined,
-          address: settings.contact.address
-            ? {
-                '@type': 'PostalAddress',
-                streetAddress: settings.contact.address,
-                addressLocality: 'Nairobi',
-                addressCountry: 'KE',
-              }
-            : undefined,
-          currenciesAccepted: 'KES',
-          areaServed: 'KE',
-          sameAs: [settings.social.tiktok, settings.social.instagram].filter(Boolean),
-        }}
-      />
+      <Seo path="/" jsonLd={[storeLd(settings), websiteLd(settings)]} />
       <h1 className="sr-only">{settings.storeName}: comfort transcending time</h1>
 
       {slides.loading && !slides.data ? <HeroSkeleton /> : <HeroCarousel slides={slides.data ?? []} />}

@@ -2,9 +2,11 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { useAsync } from '../../hooks/useAsync';
 import type { CategoryRow, ProductRow } from '../../lib/database.types';
-import { adjustStock, ApiError, createProduct, getProduct, listAllCategories, updateProduct, type ProductInput } from '../../lib/api/admin';
+import { adjustStock, ApiError, createProduct, deleteProducts, getProduct, listAllCategories, updateProduct, type ProductInput } from '../../lib/api/admin';
 import { slugify } from '../../lib/admin/labels';
 import { formatKES } from '../../lib/format';
+import { useAdmin } from '../auth';
+import { confirmDeleteProducts } from '../confirmDeleteProducts';
 import { Btn, Card, inputCls, LabeledField, Loading, Notice, PageHeader, StockPill, Toggle } from '../components/ui';
 import { ProductImages } from './product/ProductImages';
 import { VariationEditor } from './product/VariationEditor';
@@ -76,6 +78,8 @@ export default function ProductEditPage() {
   const { id } = useParams();
   const isNew = !id || id === 'new';
   const navigate = useNavigate();
+  const { isOwner } = useAdmin();
+  const [deleting, setDeleting] = useState(false);
   const categories = useAsync(listAllCategories, []);
   const data = useAsync(() => (isNew ? Promise.resolve(null) : getProduct(id as string)), [id]);
   const [form, setForm] = useState<Form>(EMPTY);
@@ -122,6 +126,19 @@ export default function ProductEditPage() {
     }
   };
 
+  const removeProduct = async () => {
+    const p = data.data?.product;
+    if (!p || !confirmDeleteProducts([p.name])) return;
+    setDeleting(true);
+    try {
+      await deleteProducts([p.id]);
+      navigate('/admin/products', { replace: true, state: { notice: `Deleted ${p.name}.` } });
+    } catch (err) {
+      setErrors([err instanceof ApiError ? err.message : 'Could not delete the product.']);
+      setDeleting(false);
+    }
+  };
+
   if (!isNew && data.loading && !data.data) return <Loading />;
   if (data.error) return <Notice kind="error">{data.error.message}</Notice>;
   const product = data.data?.product;
@@ -156,6 +173,11 @@ export default function ProductEditPage() {
               <a href={`/product/${product.slug}`} target="_blank" rel="noopener" className="rounded-lg border border-paper-300 bg-white px-3.5 py-2 text-sm text-navy-800">
                 View in shop
               </a>
+            )}
+            {product && isOwner && (
+              <Btn type="button" variant="danger" disabled={deleting} onClick={removeProduct}>
+                {deleting ? 'Deleting…' : 'Delete product'}
+              </Btn>
             )}
           </>
         }

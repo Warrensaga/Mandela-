@@ -5,20 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0a1530" />
     <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap"
     />
-    <title>Mandela Heritage Furniture</title>
+    <!--
+      Defaults for crawlers and link previews that do not run JavaScript
+      (WhatsApp, Facebook). Removed at start-up; each page then sets its own.
+      __SITE_URL__ is filled in at build time by scripts/generate-seo-files.mjs.
+    -->
+    <title data-default>Mandela Heritage Furniture | Quality Furniture in Kenya</title>
     <meta
+      data-default
       name="description"
-      content="Heritage furniture for Kenyan homes. Sofas, dining, bedroom and custom pieces, delivered across Kenya."
+      content="Buy quality sofas, beds, dining sets and custom furniture online in Kenya. Crafted in Nairobi, delivered across Kenya, order on WhatsApp and pay on confirmation."
     />
+    <meta data-default property="og:site_name" content="Mandela Heritage Furniture" />
+    <meta data-default property="og:type" content="website" />
+    <meta data-default property="og:locale" content="en_KE" />
+    <meta data-default property="og:title" content="Mandela Heritage Furniture | Quality Furniture in Kenya" />
+    <meta
+      data-default
+      property="og:description"
+      content="Sofas, beds, dining and custom pieces, crafted in Nairobi and delivered across Kenya."
+    />
+    <meta data-default property="og:image" content="__SITE_URL__/logo.png" />
+    <meta data-default name="twitter:card" content="summary" />
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      Mandela Heritage Furniture: quality sofas, beds, dining sets and custom furniture, crafted in Nairobi and delivered across Kenya.
+      Please enable JavaScript to shop online, or contact us on WhatsApp.
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
