@@ -176,18 +176,26 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           >
             <SlideImage slide={slide} eager={index === 0} />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a1530]/90 via-[#0a1530]/45 to-[#0a1530]/20 md:bg-gradient-to-r md:from-[#0a1530]/90 md:via-[#0a1530]/50 md:to-[#0a1530]/10" />
-            <div className="container-page absolute inset-x-0 bottom-0 pb-24 md:top-1/2 md:bottom-auto md:-translate-y-1/2 md:pb-0">
-              <div className="max-w-3xl">
-                <p className="eyebrow eyebrow-line !text-gold-400">Mandela Heritage Furniture</p>
-                <h2 className="mt-5 text-5xl leading-[0.95] !text-white sm:text-7xl lg:text-8xl">
-                  <Headline text={slide.headline} />
-                </h2>
-                {slide.subtext && <p className="mt-6 max-w-lg text-base text-white/80 sm:text-lg">{slide.subtext}</p>}
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <Cta slide={slide} />
-                  <Link to="/custom-request" className={buttonClasses('outline', 'lg', '!border-white/50 !text-white hover:!bg-white hover:!text-[#0a1530]')}>
-                    Custom order
-                  </Link>
+            {/* The text block always stops above the slide controls (pb-24), and the
+                headline scales with screen height too, so on short laptop screens it
+                never runs into the counter or arrows. */}
+            <div className="absolute inset-0 flex flex-col justify-end pt-12 pb-24 md:justify-center">
+              <div className="container-page w-full">
+                <div className="max-w-3xl">
+                  <p className="eyebrow eyebrow-line !text-gold-400">Mandela Heritage Furniture</p>
+                  <h2 className="mt-5 text-[min(3rem,7.5svh)] leading-[0.95] !text-white sm:text-[min(4.5rem,9svh)] lg:text-[min(6rem,10.5svh)]">
+                    <Headline text={slide.headline} />
+                  </h2>
+                  {slide.subtext && <p className="mt-6 max-w-lg text-base text-white/80 sm:text-lg">{slide.subtext}</p>}
+                  <div className="mt-8 flex flex-wrap gap-3">
+                    <Cta slide={slide} />
+                    <Link
+                      to="/custom-request"
+                      className={buttonClasses('outline', 'lg', '!border-white/50 !text-white hover:!bg-white hover:!text-[#0a1530]')}
+                    >
+                      Custom order
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -211,7 +219,9 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                   aria-current={i === index ? 'true' : undefined}
                   className="group grid h-11 place-items-center px-1"
                 >
-                  <span className={`block h-0.5 transition-all duration-300 ${i === index ? 'w-8 bg-gold-500 sm:w-10' : 'w-4 bg-white/35 group-hover:bg-white/70 sm:w-5'}`} />
+                  <span
+                    className={`block h-0.5 transition-all duration-300 ${i === index ? 'w-8 bg-gold-500 sm:w-10' : 'w-4 bg-white/35 group-hover:bg-white/70 sm:w-5'}`}
+                  />
                 </button>
               ))}
             </div>
