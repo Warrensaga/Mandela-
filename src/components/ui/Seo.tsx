@@ -4,6 +4,8 @@ import { useSite } from '../../state/site';
 
 interface SeoProps {
   title?: string;
+  /** Full title used as-is (no store name added), e.g. for the home page. */
+  absoluteTitle?: string;
   description?: string | null;
   image?: string | null;
   /** JSON-LD structured data object(s). */
@@ -33,9 +35,13 @@ function clip(text: string, max = 158): string {
 }
 
 /** Per-page meta tags. React 19 hoists <title>/<meta>/<link> into <head>. */
-export function Seo({ title, description, image, jsonLd, breadcrumbs, path, type = 'website', noindex }: SeoProps) {
+export function Seo({ title, absoluteTitle, description, image, jsonLd, breadcrumbs, path, type = 'website', noindex }: SeoProps) {
   const { settings } = useSite();
-  const fullTitle = title ? `${title} | ${settings.storeName}` : `${settings.storeName} | Quality Furniture in Kenya`;
+  // Google shows about 60 characters: use the full store name when it fits,
+  // otherwise the short brand, so the page's keywords are never cut off.
+  const shortBrand = settings.storeName.replace(/\s+furniture$/i, '') || settings.storeName;
+  const suffix = title && title.length + settings.storeName.length + 3 <= 62 ? settings.storeName : shortBrand;
+  const fullTitle = absoluteTitle ?? (title ? `${title} | ${suffix}` : `${settings.storeName} | Quality Furniture in Kenya`);
   const desc = clip(description || SEO_DEFAULT_DESCRIPTION);
   const canonical = absUrl(path ?? (typeof window !== 'undefined' ? window.location.pathname : '/'));
   const ogImage = absUrl(image || '/logo.png');

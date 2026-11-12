@@ -9,6 +9,8 @@
 | Fairdeal | WordPress + Yoast | Blocks admin and add-to-cart URLs | Yoast index | Yoast defaults |
 | Furniture Palace | — | Blocked automated access (Cloudflare) | — | — |
 
+Keyword targets and what to do when adding products: see [seo-keywords.md](seo-keywords.md).
+
 ## What this site now does
 
 - **robots.txt** (generated at build): allows the catalogue; blocks `/admin`, `/cart`, `/checkout`,

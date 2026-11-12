@@ -5,6 +5,7 @@ import { Button, ButtonAnchor } from '../components/ui/Button';
 import { Field } from '../components/ui/Field';
 import { Icon, WhatsAppIcon } from '../components/ui/Icon';
 import { Seo } from '../components/ui/Seo';
+import { PAGE_KEYWORDS } from '../lib/seoKeywords';
 import { mapDirectionsUrl, mapEmbedUrl, mapOpenUrl, showroomLocation } from '../lib/maps';
 import { formatKePhone, normalizeKePhone } from '../lib/phone';
 import { contactMessage, whatsappLink } from '../lib/whatsapp';
@@ -81,8 +82,8 @@ export default function ContactPage() {
   return (
     <>
       <Seo
-        title="Contact us"
-        description="Call, WhatsApp or visit the Mandela Heritage Furniture showroom in Nairobi. Opening hours, directions and a contact form."
+        title={PAGE_KEYWORDS.contact.title}
+        description={PAGE_KEYWORDS.contact.description}
         jsonLd={storeLd(settings)}
         breadcrumbs={[
           { name: 'Home', path: '/' },

@@ -3,6 +3,10 @@ import { PageBand } from '../components/layout/PageBand';
 import { chipClass, ShopView } from '../components/shop/ShopView';
 import { Seo } from '../components/ui/Seo';
 import { Skeleton } from '../components/ui/Skeleton';
+import { CategoryIntro } from '../components/shop/CategoryIntro';
+import { useAsync } from '../hooks/useAsync';
+import { fetchCatalog } from '../lib/api';
+import { categoryDescription, categoryKeywords, priceFacts } from '../lib/seoKeywords';
 import type { CategoryNode } from '../lib/api';
 import { useSite } from '../state/site';
 import NotFoundPage from './NotFoundPage';
@@ -11,6 +15,8 @@ export default function CategoryPage() {
   const { slug = '' } = useParams();
   const { findCategory, ready } = useSite();
   const found = findCategory(slug);
+  // Cached catalogue: live "from" price and count for the title, description and intro.
+  const catalog = useAsync(() => fetchCatalog(), []);
 
   if (!ready) {
     return (
@@ -26,6 +32,9 @@ export default function CategoryPage() {
   const { category, parent } = found;
   // With no parent, the category itself is a top-level node (it carries its children).
   const top: CategoryNode = parent ?? (category as CategoryNode);
+  const subtree = new Set([category.id, ...(parent ? [] : (category as CategoryNode).children.map((c) => c.id))]);
+  const facts = priceFacts((catalog.data ?? []).filter((p) => subtree.has(p.categoryId)));
+  const kw = categoryKeywords(category);
 
   const chips = top.children.length ? (
     <>
@@ -45,8 +54,8 @@ export default function CategoryPage() {
   return (
     <div className="theme-dark">
       <Seo
-        title={category.name}
-        description={category.description ?? `Shop ${category.name.toLowerCase()} online in Kenya at Mandela Heritage Furniture. Crafted in Nairobi, delivered across Kenya.`}
+        title={kw.title}
+        description={categoryDescription(kw, facts)}
         image={category.imageUrl}
         path={`/category/${category.slug}`}
         breadcrumbs={[
@@ -69,6 +78,7 @@ export default function CategoryPage() {
       />
       <div className="container-page pb-16">
         <ShopView key={category.slug} categorySlug={category.slug} chips={chips} />
+        <CategoryIntro category={category} parent={parent} subcategories={parent ? [] : (category as CategoryNode).children} keywords={kw} facts={facts} />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { GoogleReviews } from '../components/home/GoogleReviews';
 import { HeroCarousel, HeroSkeleton } from '../components/home/HeroCarousel';
+import { ShopIntro } from '../components/home/ShopIntro';
 import {
   BenefitStrip,
   CustomCta,
@@ -17,6 +18,7 @@ import { useAsync } from '../hooks/useAsync';
 import { fetchCatalog, fetchHeroSlides } from '../lib/api';
 import { isAvailable, sortProducts } from '../lib/catalog/filters';
 import { storeLd, websiteLd } from '../lib/seo';
+import { PAGE_KEYWORDS } from '../lib/seoKeywords';
 import { useSite } from '../state/site';
 
 export default function HomePage() {
@@ -33,8 +35,13 @@ export default function HomePage() {
 
   return (
     <>
-      <Seo path="/" jsonLd={[storeLd(settings), websiteLd(settings)]} />
-      <h1 className="sr-only">{settings.storeName}: comfort transcending time</h1>
+      <Seo
+        path="/"
+        absoluteTitle={PAGE_KEYWORDS.home.title}
+        description={PAGE_KEYWORDS.home.description}
+        jsonLd={[storeLd(settings), websiteLd(settings)]}
+      />
+      <h1 className="sr-only">{settings.storeName}: furniture shop in Nairobi, Kenya</h1>
 
       {slides.loading && !slides.data ? <HeroSkeleton /> : <HeroCarousel slides={slides.data ?? []} />}
       <BenefitStrip />
@@ -85,6 +92,7 @@ export default function HomePage() {
       <ShopByRoom products={products} />
       <PromiseSection />
       <GoogleReviews />
+      <ShopIntro />
       <CustomCta />
     </>
   );

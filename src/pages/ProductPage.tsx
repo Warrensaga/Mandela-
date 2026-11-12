@@ -153,11 +153,11 @@ function ProductView({ product }: { product: ProductDetail }) {
     <div className="theme-dark">
       <div className="container-page py-8 sm:py-12">
         <Seo
-          title={product.name}
-          description={
-            product.description ??
-            `Buy the ${product.name}${category ? ` (${category.name.toLowerCase()})` : ''} from ${settings.storeName}. ${formatKES(range.min)}${product.hasVariants && range.min !== range.max ? ' and up' : ''}, delivered across Kenya.`
-          }
+          // Matches how Kenyans search: "<product> price in Kenya". Price first in the description.
+          title={`${product.name} Price in Kenya`}
+          description={`${product.name} price in Kenya: ${product.hasVariants && range.min !== range.max ? 'from ' : ''}${formatKES(range.min)}${
+            category ? ` · ${category.name}` : ''
+          }, delivered across Kenya. ${product.description ?? `Made in our Nairobi workshop by ${settings.storeName}.`}`}
           image={product.images[0]?.url}
           path={`/product/${product.slug}`}
           type="product"

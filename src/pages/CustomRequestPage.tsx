@@ -3,6 +3,7 @@ import { Button, ButtonAnchor } from '../components/ui/Button';
 import { Field } from '../components/ui/Field';
 import { Icon, WhatsAppIcon } from '../components/ui/Icon';
 import { Seo } from '../components/ui/Seo';
+import { PAGE_KEYWORDS } from '../lib/seoKeywords';
 import { ApiError, submitCustomRequest, validateReferenceImage } from '../lib/api';
 import { normalizeKePhone } from '../lib/phone';
 import { whatsappLink } from '../lib/whatsapp';
@@ -102,8 +103,8 @@ export default function CustomRequestPage() {
   return (
     <div className="container-page max-w-3xl py-10 sm:py-14">
       <Seo
-        title="Custom furniture in Kenya"
-        description="Request a custom sofa, bed, dining table or any piece in your size, fabric and finish. Our Nairobi workshop will quote and build it for you."
+        title={PAGE_KEYWORDS.custom.title}
+        description={PAGE_KEYWORDS.custom.description}
         breadcrumbs={[
           { name: 'Home', path: '/' },
           { name: 'Custom orders', path: '/custom-request' },
