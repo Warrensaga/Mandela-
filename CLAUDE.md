@@ -114,6 +114,8 @@ Many products come in several sizes, fabrics, colours or finishes (for example a
 ## Storefront pages
 Home (hero carousel, category cards, featured products, why-choose-us, delivery and payment highlights), Category and sub-category pages, Shop (grid + filters + search + sort), Product detail (gallery, option selectors for variations, delivery estimate, stock state, quantity, add to cart, WhatsApp quick-order with the selected variant in the message), Cart (drawer + page, persisted in localStorage), Checkout (name, phone, email optional, address, city, delivery zone, preferred date, notes), Order confirmation (order number, summary, payment instructions, "Continue on WhatsApp"), Track Order, Custom Request, Guides list and detail, Delivery, Returns & Warranty, Payment Options, FAQ, About, Contact, 404. Per-page SEO meta tags and structured data (Product, LocalBusiness).
 
+Added with the owner's approval (from a competitor feature review): **saved items** (heart on cards and product page, stored on the device, `/saved` page with "Send my list on WhatsApp"), **full-screen photo zoom** on product pages, **search suggestions** as you type (products, categories, see all), and **recently viewed** products on the product page. None of these need customer accounts.
+
 ## Admin dashboard (/admin, Supabase Auth, role-checked)
 - **Dashboard**: orders and revenue (today/week/month), pending orders, low and out-of-stock alerts, recent orders, top sellers, new custom requests.
 - **Inventory**: stock badges per variant, inline restock/adjust with reason and note, movement history, filters, search, CSV export.
