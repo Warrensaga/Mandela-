@@ -88,6 +88,11 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
             </Link>
           </li>
           <li>
+            <Link to="/saved" onClick={onClose} className="block py-2 text-navy-800">
+              Saved items
+            </Link>
+          </li>
+          <li>
             <Link to="/contact" onClick={onClose} className="block py-2 text-navy-800">
               Contact us
             </Link>

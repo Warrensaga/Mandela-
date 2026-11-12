@@ -5,6 +5,9 @@ import { Gallery } from '../components/product/Gallery';
 import { OptionSelector } from '../components/product/OptionSelector';
 import { ProductBadges } from '../components/product/ProductCard';
 import { ProductGrid } from '../components/product/ProductGrid';
+import { RecentlyViewed } from '../components/product/RecentlyViewed';
+import { SaveButton } from '../components/product/SaveButton';
+import { recordRecentlyViewed } from '../state/recentlyViewed';
 import { Button, ButtonAnchor } from '../components/ui/Button';
 import { Icon, WhatsAppIcon } from '../components/ui/Icon';
 import { Price } from '../components/ui/Price';
@@ -91,6 +94,7 @@ function ProductView({ product }: { product: ProductDetail }) {
   const sku = variant?.sku ?? product.sku;
   const pageUrl = absUrl(`/product/${product.slug}`);
 
+  useEffect(() => recordRecentlyViewed(product.id), [product.id]);
   useEffect(() => setQuantity((q) => Math.min(q, maxQty)), [maxQty]);
   useEffect(() => {
     if (!added) return;
@@ -228,9 +232,12 @@ function ProductView({ product }: { product: ProductDetail }) {
                 {canBuy ? <>Buy now · {formatKES(price * quantity)}</> : buttonLabel}
               </Button>
             </div>
-            <Button variant="outline" size="lg" className="mt-3 w-full" disabled={!canBuy} onClick={() => addToCart(true)} aria-describedby="add-status">
-              <Icon name="cart" className="h-4 w-4" /> {added ? 'Added to cart' : 'Add to cart'}
-            </Button>
+            <div className="mt-3 flex gap-3">
+              <Button variant="outline" size="lg" className="flex-1" disabled={!canBuy} onClick={() => addToCart(true)} aria-describedby="add-status">
+                <Icon name="cart" className="h-4 w-4" /> {added ? 'Added to cart' : 'Add to cart'}
+              </Button>
+              <SaveButton productId={product.id} productName={product.name} variant="full" />
+            </div>
             <p id="add-status" className="sr-only" aria-live="polite">
               {added ? `${product.name} added to cart` : ''}
             </p>
@@ -286,6 +293,8 @@ function ProductView({ product }: { product: ProductDetail }) {
           </div>
           {related.loading && !related.data ? <GridSkeleton count={4} /> : <ProductGrid products={relatedProducts} />}
         </section>
+
+        <RecentlyViewed excludeId={product.id} />
       </div>
     </div>
   );

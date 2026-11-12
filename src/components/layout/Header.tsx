@@ -4,11 +4,13 @@ import { useHeaderScroll } from '../../hooks/useHeaderScroll';
 import { formatKePhone } from '../../lib/phone';
 import { whatsappLink } from '../../lib/whatsapp';
 import { useCart } from '../../state/cart';
+import { useSaved } from '../../state/saved';
 import { useSite } from '../../state/site';
 import { Icon, WhatsAppIcon } from '../ui/Icon';
 import { AnnouncementBar } from './AnnouncementBar';
 import { MegaMenu } from './MegaMenu';
 import { MobileMenu } from './MobileMenu';
+import { SearchSuggestionList, useSearchSuggestions } from './SearchSuggestions';
 
 const navItem =
   'relative inline-flex h-12 items-center px-3.5 font-label text-[11px] font-bold tracking-[0.16em] whitespace-nowrap text-navy-800 uppercase transition-colors hover:text-brand-600 xl:px-4';
@@ -24,30 +26,83 @@ function SearchBar({ id, withCategories = false }: { id: string; withCategories?
   const { pathname, search } = useLocation();
   const [q, setQ] = useState('');
   const [cat, setCat] = useState('');
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(-1);
+  const [used, setUsed] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const listId = `${id}-suggestions`;
+  const { items } = useSearchSuggestions(q, cat, used);
+  const showList = open && q.trim().length >= 2 && items.length > 0;
 
-  // Keep the box in step with the URL (e.g. after browser back).
+  // Keep the box in step with the URL (e.g. after browser back), and close the list on navigation.
   useEffect(() => {
     setQ(pathname === '/shop' || pathname.startsWith('/category/') ? (new URLSearchParams(search).get('q') ?? '') : '');
+    setOpen(false);
   }, [pathname, search]);
+
+  useEffect(() => setActive(-1), [q, cat]);
+
+  // Close when clicking or tapping outside the search box.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: Event) => !formRef.current?.contains(e.target as Node) && setOpen(false);
+    document.addEventListener('pointerdown', onDown);
+    return () => document.removeEventListener('pointerdown', onDown);
+  }, [open]);
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
+    setOpen(false);
+    const picked = showList && active >= 0 ? items[active] : undefined;
+    if (picked) return navigate(picked.to);
     const term = q.trim();
     const base = cat ? `/category/${cat}` : '/shop';
     navigate(term ? `${base}?q=${encodeURIComponent(term)}` : base);
   };
 
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      if (!showList) return setOpen(true);
+      e.preventDefault();
+      const step = e.key === 'ArrowDown' ? 1 : -1;
+      // Cycle through the suggestions; -1 means "nothing highlighted" (Enter searches the typed text).
+      setActive((i) => {
+        const next = i + step;
+        if (next < -1) return items.length - 1;
+        return next >= items.length ? -1 : next;
+      });
+    } else if (e.key === 'Escape') {
+      setOpen(false);
+    }
+  };
+
   return (
-    <form role="search" onSubmit={submit} className="flex h-12 w-full border-2 border-navy-800 bg-paper-50 focus-within:border-brand-600">
+    <form ref={formRef} role="search" onSubmit={submit} className="relative flex h-12 w-full border-2 border-navy-800 bg-paper-50 focus-within:border-brand-600">
       <label htmlFor={id} className="sr-only">Search furniture</label>
       <input
         id={id}
         type="search"
         value={q}
-        onChange={(e) => setQ(e.target.value)}
+        onChange={(e) => {
+          setQ(e.target.value);
+          setUsed(true);
+          setOpen(true);
+        }}
+        onFocus={() => {
+          setUsed(true);
+          setOpen(true);
+        }}
+        onKeyDown={onKeyDown}
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded={showList}
+        aria-controls={listId}
+        aria-activedescendant={showList && active >= 0 ? `${listId}-${active}` : undefined}
+        autoComplete="off"
         placeholder="Search sofas, beds, dining tables…"
         className="min-w-0 flex-1 bg-transparent px-4 text-[15px] text-ink placeholder:text-muted/80 focus:outline-none"
       />
+      {showList && <SearchSuggestionList id={listId} items={items} activeIndex={active} onPick={() => setOpen(false)} />}
       {withCategories && (
         <>
           <label htmlFor={`${id}-cat`} className="sr-only">Search in</label>
@@ -79,6 +134,7 @@ function SearchBar({ id, withCategories = false }: { id: string; withCategories?
 export function Header() {
   const { settings } = useSite();
   const cart = useCart();
+  const saved = useSaved();
   const { compact, hidden } = useHeaderScroll();
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname, search } = useLocation();
@@ -157,6 +213,21 @@ export function Header() {
                 </span>
               </a>
             )}
+            <Link
+              to="/saved"
+              className="relative flex items-center gap-3 p-2.5 text-navy-800 hover:text-brand-600 lg:p-0"
+              aria-label={`Saved items, ${saved.count} ${saved.count === 1 ? 'item' : 'items'}`}
+            >
+              <span className="relative grid place-items-center lg:h-11 lg:w-11 lg:border lg:border-paper-300">
+                <Icon name="heart" className="h-5 w-5" />
+                {saved.count > 0 && (
+                  <span className="absolute -top-2 -right-2 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-terracotta-600 px-1 font-label text-[10px] font-bold text-white lg:-top-1.5 lg:-right-1.5">
+                    {saved.count}
+                  </span>
+                )}
+              </span>
+              <span className="hidden font-label text-[11px] font-bold tracking-[0.16em] uppercase xl:inline">Saved</span>
+            </Link>
             <button
               type="button"
               className="relative flex items-center gap-3 p-2.5 text-navy-800 hover:text-brand-600 lg:p-0"

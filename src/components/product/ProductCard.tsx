@@ -4,6 +4,7 @@ import { isAvailable } from '../../lib/catalog/filters';
 import { useSite } from '../../state/site';
 import { Img } from '../ui/Img';
 import { Price } from '../ui/Price';
+import { SaveButton } from './SaveButton';
 
 export function isOnOffer(p: Pick<ProductSummary, 'compareAtPrice' | 'minPrice'>): boolean {
   return p.compareAtPrice !== null && p.compareAtPrice > p.minPrice;
@@ -61,6 +62,7 @@ export function ProductCard({ product, priority = false }: { product: ProductSum
         <div className="absolute top-3 left-3">
           <ProductBadges product={product} />
         </div>
+        <SaveButton productId={product.id} productName={product.name} className="absolute top-2 right-2" />
         <span className="label-mono pointer-events-none absolute inset-x-3 bottom-3 translate-y-2 bg-white py-3 text-center text-[#0a1530] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
           {available ? (product.hasVariants ? 'Choose options' : 'View piece') : 'View details'} ↗
         </span>

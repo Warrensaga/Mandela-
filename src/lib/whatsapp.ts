@@ -27,6 +27,15 @@ export function productMessage(input: {
   return lines.join('\n');
 }
 
+/** A customer's saved list, sent for prices, availability or a quote. */
+export function savedListMessage(items: { name: string; price: number; from: boolean; url: string }[]): string {
+  const lines = ['Hello, I am interested in these pieces I saved:', ''];
+  for (const i of items.slice(0, 30)) lines.push(`- ${i.name}: ${i.from ? 'from ' : ''}${formatKES(i.price)}`, `  ${i.url}`);
+  if (items.length > 30) lines.push(`...and ${items.length - 30} more`);
+  lines.push('', 'Are they available, and what would delivery cost?');
+  return lines.join('\n');
+}
+
 /** Contact form message, sent through WhatsApp (no message is stored on our side). */
 export function contactMessage(input: { name: string; phone: string; email?: string; subject: string; message: string }): string {
   const lines = [`Hello, this is ${input.name}.`, `Subject: ${input.subject}`, '', input.message.trim(), '', `Phone: ${input.phone}`];

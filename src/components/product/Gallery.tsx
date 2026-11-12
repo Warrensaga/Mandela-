@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import type { ProductImage } from '../../lib/api';
 import { Icon } from '../ui/Icon';
 import { Img } from '../ui/Img';
+import { Lightbox } from './Lightbox';
 
 interface GalleryProps {
   images: ProductImage[];
@@ -13,6 +14,7 @@ interface GalleryProps {
 
 export function Gallery({ images, productName, activeImageId }: GalleryProps) {
   const [index, setIndex] = useState(0);
+  const [viewerOpen, setViewerOpen] = useState(false);
 
   useEffect(() => {
     if (!activeImageId) return;
@@ -45,7 +47,8 @@ export function Gallery({ images, productName, activeImageId }: GalleryProps) {
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.12}
             onDragEnd={onDragEnd}
-            className="touch-pan-y"
+            onTap={() => setViewerOpen(true)}
+            className="cursor-zoom-in touch-pan-y"
           >
             <Img
               src={current.url}
@@ -57,6 +60,14 @@ export function Gallery({ images, productName, activeImageId }: GalleryProps) {
             />
           </motion.div>
         </AnimatePresence>
+        <button
+          type="button"
+          onClick={() => setViewerOpen(true)}
+          className="absolute top-3 right-3 grid h-10 w-10 place-items-center rounded-full bg-paper-50/90 text-navy-800 shadow hover:bg-paper-100"
+          aria-label="View photos full screen"
+        >
+          <Icon name="expand" className="h-4 w-4" />
+        </button>
         {images.length > 1 && (
           <>
             <button
@@ -98,6 +109,7 @@ export function Gallery({ images, productName, activeImageId }: GalleryProps) {
           ))}
         </ul>
       )}
+      {viewerOpen && <Lightbox images={images} productName={productName} startIndex={index} onClose={() => setViewerOpen(false)} />}
     </div>
   );
 }
