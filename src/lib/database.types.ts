@@ -117,6 +117,19 @@ export type CustomerRow = {
   created_at: string;
 }
 
+export type ReviewRow = {
+  id: string;
+  author_name: string;
+  rating: number;
+  body: string;
+  review_date: string | null;
+  source: 'google';
+  is_published: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
 export type DeliveryZoneRow = {
   id: string;
   name: string;
@@ -289,6 +302,7 @@ export type Database = {
       custom_requests: Table<CustomRequestRow, 'customer_name' | 'description' | 'phone'>;
       customers: Table<CustomerRow, 'full_name' | 'phone'>;
       delivery_zones: Table<DeliveryZoneRow, 'name'>;
+      reviews: Table<ReviewRow, 'author_name' | 'rating' | 'body'>;
       guides: Table<GuideRow, 'slug' | 'title'>;
       hero_slides: Table<HeroSlideRow, 'headline' | 'image_url'>;
       inventory_movements: Table<InventoryMovementRow, 'change_quantity' | 'product_id' | 'reason'>;

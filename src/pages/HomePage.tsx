@@ -1,9 +1,9 @@
+import { GoogleReviews } from '../components/home/GoogleReviews';
 import { HeroCarousel, HeroSkeleton } from '../components/home/HeroCarousel';
 import {
   BenefitStrip,
   CustomCta,
   DealsStrip,
-  DeliveryAndPayment,
   FeatureSplits,
   PromiseSection,
   ShopByCategory,
@@ -84,7 +84,7 @@ export default function HomePage() {
 
       <ShopByRoom products={products} />
       <PromiseSection />
-      <DeliveryAndPayment />
+      <GoogleReviews />
       <CustomCta />
     </>
   );

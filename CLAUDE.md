@@ -123,6 +123,7 @@ Home (hero carousel, category cards, featured products, why-choose-us, delivery 
 - **Orders**: filters (status, payment, date, search), detail page, update status and payment status, record deposit/payment method, internal notes, printable invoice and packing slip, "Message customer on WhatsApp" with prefilled text. Cancel restores stock.
 - **Customers**: search, detail with total orders and total spent, order history, notes, CSV export.
 - **Custom requests**: pipeline view, quote price, convert to order, status updates.
+- **Reviews**: real Google reviews copied in by the owner (name, stars, text, date), publish toggle, drag to reorder, plus the Google reviews link and overall rating/count as shown on Google. Shown on the home page in place of the delivery/payment block once at least one is published.
 - **Delivery zones**, **Guides**, **Settings**.
 
 ## Blog and guide content rules

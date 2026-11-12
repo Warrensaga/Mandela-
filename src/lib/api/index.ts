@@ -3,5 +3,6 @@ export * from './catalog';
 export * from './settings';
 export * from './orders';
 export * from './customRequests';
+export * from './reviews';
 export * from './errors';
 export type * from './types';

@@ -124,6 +124,8 @@ export interface SiteSettings {
   announcement: { enabled: boolean; text: string; link: string | null };
   /** Social profile links (https URLs); empty string hides the icon. */
   social: { tiktok: string; instagram: string };
+  /** Link to the Google reviews page, plus the overall rating and count as shown on Google (owner-entered). */
+  googleReviews: { url: string; rating: number | null; count: number | null };
 }
 
 export interface CheckoutCustomer {
