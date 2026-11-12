@@ -1,0 +1,15 @@
+# Minimal Supabase CLI config. Only used for `supabase link` / `supabase db push`
+# and for running a local stack with `supabase start`.
+project_id = "mandela-heritage"
+
+[db]
+major_version = 17
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql", "./seed_images.sql"]
+
+[auth]
+# Staff sign up at /admin/signup. New accounts get NO access until the owner
+# approves them on the admin Team page (admin_access_requests). Customers never sign in.
+enable_signup = true

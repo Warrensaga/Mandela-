@@ -1,0 +1,162 @@
+@import 'tailwindcss';
+
+/*
+ * Palette taken from the Mandela Heritage logo:
+ *   brand blue  #1556C2 / #3B72CF   ("MANDELA HERITAGE FURNITURES")
+ *   gold        #DE9830             ("comfort transcending time")
+ *   navy        deep blue-black built from the brand blue, for dark sections
+ *   paper       cool whites and greys for light pages and borders
+ * terracotta stays for sale badges and error messages.
+ */
+@theme {
+  --font-serif: 'Playfair Display', 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
+  --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Labels and buttons: bold uppercase sans with wide spacing (not monospace). */
+  --font-label: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --color-navy-50: #eef3fb;
+  --color-navy-100: #dde6f6;
+  --color-navy-200: #bccdeb;
+  --color-navy-400: #4c6a9e;
+  --color-navy-600: #1f3766;
+  --color-navy-800: #0f1f3d;
+  --color-navy-900: #0a1530;
+
+  --color-brand-500: #3b72cf;
+  --color-brand-600: #1556c2;
+  --color-brand-700: #0f47a3;
+
+  --color-gold-300: #f5d49e;
+  --color-gold-400: #e9b25f;
+  --color-gold-500: #de9830;
+  --color-gold-600: #b97818;
+  /* Gold for TEXT: deep enough for small type on white (5.6:1); flips bright in theme-dark. */
+  --color-gold-ink: #8f5d0e;
+
+  --color-paper-50: #ffffff;
+  --color-paper-100: #f4f6fa;
+  --color-paper-200: #e4e8f0;
+  --color-paper-300: #cdd5e3;
+
+  --color-terracotta-500: #d6452f;
+  --color-terracotta-600: #b9351f;
+
+  --color-ink: #0f1729;
+  --color-muted: #5b6577;
+
+  --shadow-lift: 0 18px 40px -18px rgb(10 21 48 / 0.35);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-paper-50 font-sans text-ink antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  .font-display {
+    @apply font-serif font-medium tracking-tight text-navy-800;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold-500);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-gold-400);
+    color: #0a1530;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  /* Small uppercase monospace label, as on the reference layout. */
+  .eyebrow {
+    @apply font-label text-[10px] font-extrabold tracking-[0.24em] text-gold-ink uppercase sm:text-[11px];
+  }
+  .eyebrow-line {
+    @apply inline-flex items-center gap-3 before:block before:h-px before:w-6 before:bg-gold-500;
+  }
+  /* Bigger finger target for small inline text links, without moving the layout. */
+  .tap {
+    @apply inline-block py-3 -my-3;
+  }
+  .label-mono {
+    @apply font-label text-[11px] font-bold tracking-[0.14em] uppercase;
+  }
+  .input {
+    @apply w-full rounded-none border border-paper-300 bg-paper-50 px-3.5 py-2.5 text-base text-ink placeholder:text-muted/70 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 focus:outline-none disabled:bg-paper-100;
+  }
+  .card {
+    @apply border border-paper-200 bg-paper-50;
+  }
+  .prose-plain p + p {
+    @apply mt-3;
+  }
+  /* Outlined display text (one line of a big headline). */
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--outline-color, rgb(255 255 255 / 0.92));
+    paint-order: stroke fill;
+  }
+}
+
+/*
+ * Dark sections: add `theme-dark` to a wrapper and everything inside flips to
+ * the navy palette. Tailwind v4 utilities read these CSS variables, so the same
+ * components work on light and dark pages without duplicate styles.
+ */
+.theme-dark {
+  --color-paper-50: #0a1530;
+  --color-paper-100: #101d3c;
+  --color-paper-200: #1d2c4f;
+  --color-paper-300: #2c3d63;
+  --color-navy-50: #16244a;
+  --color-navy-100: #1c2c56;
+  --color-navy-200: #2c3d66;
+  --color-navy-400: #9db2d8;
+  --color-navy-600: #c9d6ee;
+  --color-navy-800: #f3f6fc;
+  --color-navy-900: #ffffff;
+  --color-ink: #e9eef8;
+  --color-muted: #9aa7c0;
+  --color-gold-ink: #e9b25f;
+  /* Sale prices and errors need a lighter red on navy (7:1). */
+  --color-terracotta-500: #ff8f7a;
+  --color-terracotta-600: #ff8f7a;
+  background-color: var(--color-paper-50);
+  color: var(--color-ink);
+  color-scheme: dark;
+}
+
+/* Lenis (https://github.com/darkroomengineering/lenis) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

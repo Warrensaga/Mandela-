@@ -1,0 +1,23 @@
+# dependencies and builds
+node_modules/
+dist/
+.vercel/
+
+# env (keep .env.example)
+.env
+.env.*
+!.env.example
+
+# supabase local
+supabase/.branches/
+supabase/.temp/
+
+# editor / OS
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+*.log
+
+# local Claude Code settings
+.claude/settings.local.json
