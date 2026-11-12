@@ -1,0 +1,8 @@
+# Development copy. The production robots.txt (with the Sitemap line) is
+# generated at build time by scripts/generate-seo-files.mjs.
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /order/

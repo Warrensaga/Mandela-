@@ -3,7 +3,9 @@ import { ApiError, toApiError } from './errors';
 import type { CustomRequestInput } from './types';
 
 const MAX_BYTES = 5 * 1024 * 1024;
-const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
+/** Allowed image types and the extension each is stored with (the storage policy accepts only these). */
+const EXTENSIONS: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic' };
+const ALLOWED = Object.keys(EXTENSIONS);
 
 export function validateReferenceImage(file: File): string | null {
   if (!ALLOWED.includes(file.type)) return 'Please choose a JPG, PNG, WebP or HEIC image.';
@@ -12,7 +14,7 @@ export function validateReferenceImage(file: File): string | null {
 }
 
 async function uploadReferenceImage(file: File): Promise<string> {
-  const ext = (file.name.split('.').pop() ?? 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+  const ext = EXTENSIONS[file.type] ?? 'jpg';
   const path = `uploads/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage
     .from('custom-requests')

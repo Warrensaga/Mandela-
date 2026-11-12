@@ -1,4 +1,5 @@
 import { supabase } from '../supabase';
+import { safeLink } from '../url';
 import type { CategoryRow, ProductSummaryRow } from '../database.types';
 import { ApiError, toApiError } from './errors';
 import type {
@@ -60,7 +61,7 @@ export async function fetchHeroSlides(): Promise<HeroSlide[]> {
     headline: s.headline,
     subtext: s.subtext,
     ctaLabel: s.cta_label,
-    ctaUrl: s.cta_url,
+    ctaUrl: safeLink(s.cta_url),
   }));
 }
 

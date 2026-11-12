@@ -69,6 +69,20 @@ export async function listProducts(): Promise<ProductSummaryRow[]> {
   return check(await supabase.from('product_summaries').select('*').order('created_at', { ascending: false }));
 }
 
+/**
+ * Permanently deletes products (owner only), with their images, options,
+ * variants and stock history. Past orders keep their own snapshot of each line.
+ * Uploaded photos are then removed from storage (placeholder URLs are skipped).
+ */
+export async function deleteProducts(ids: string[]): Promise<{ deleted: number; names: string[] }> {
+  const { data, error } = await supabase.rpc('admin_delete_products', { p_product_ids: ids });
+  if (error) throw toApiError(error);
+  const r = (data ?? {}) as { deleted?: number; names?: string[]; image_urls?: string[] };
+  // Storage cleanup is best effort: the products are already gone.
+  await Promise.allSettled((r.image_urls ?? []).map((url) => deletePublicImage(url)));
+  return { deleted: Number(r.deleted ?? 0), names: r.names ?? [] };
+}
+
 export interface AdminProduct {
   product: ProductRow;
   images: ProductImageRow[];

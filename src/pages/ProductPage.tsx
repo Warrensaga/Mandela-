@@ -28,6 +28,7 @@ import {
 import { formatKES } from '../lib/format';
 import { productMessage, whatsappLink } from '../lib/whatsapp';
 import { useCart } from '../state/cart';
+import { absUrl, productLd } from '../lib/seo';
 import { useSite } from '../state/site';
 import { usePageWhatsAppMessage } from '../state/whatsapp';
 import NotFoundPage from './NotFoundPage';
@@ -88,7 +89,7 @@ function ProductView({ product }: { product: ProductDetail }) {
   const maxQty = product.madeToOrder ? 99 : Math.max(1, Math.min(stock, 99));
   const label = variant ? variantLabel(product, variant) : null;
   const sku = variant?.sku ?? product.sku;
-  const pageUrl = `${window.location.origin}/product/${product.slug}`;
+  const pageUrl = absUrl(`/product/${product.slug}`);
 
   useEffect(() => setQuantity((q) => Math.min(q, maxQty)), [maxQty]);
   useEffect(() => {
@@ -132,33 +133,6 @@ function ProductView({ product }: { product: ProductDetail }) {
     [product.id, product.categoryId, product.room, product.price, related.data, categories],
   );
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.name,
-    description: product.description ?? undefined,
-    image: product.images.map((i) => i.url),
-    sku: product.sku ?? undefined,
-    brand: { '@type': 'Brand', name: settings.storeName },
-    category: category?.name,
-    offers: product.hasVariants
-      ? {
-          '@type': 'AggregateOffer',
-          priceCurrency: 'KES',
-          lowPrice: range.min,
-          highPrice: range.max,
-          offerCount: product.variants.length,
-          availability: totalStock(product) > 0 || product.madeToOrder ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-        }
-      : {
-          '@type': 'Offer',
-          priceCurrency: 'KES',
-          price: product.price,
-          url: pageUrl,
-          availability:
-            product.madeToOrder ? 'https://schema.org/PreOrder' : product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-        },
-  };
 
   let buttonLabel = 'Add to cart';
   if (missing.length) buttonLabel = `Choose ${missing.join(' and ').toLowerCase()}`;
@@ -176,9 +150,20 @@ function ProductView({ product }: { product: ProductDetail }) {
       <div className="container-page py-8 sm:py-12">
         <Seo
           title={product.name}
-          description={product.description ?? `${product.name} from Mandela Heritage Furniture. Delivered across Kenya.`}
+          description={
+            product.description ??
+            `Buy the ${product.name}${category ? ` (${category.name.toLowerCase()})` : ''} from ${settings.storeName}. ${formatKES(range.min)}${product.hasVariants && range.min !== range.max ? ' and up' : ''}, delivered across Kenya.`
+          }
           image={product.images[0]?.url}
-          jsonLd={jsonLd}
+          path={`/product/${product.slug}`}
+          type="product"
+          jsonLd={productLd(product, category, settings)}
+          breadcrumbs={[
+            { name: 'Home', path: '/' },
+            { name: 'Shop', path: '/shop' },
+            ...(category ? [{ name: category.name, path: `/category/${category.slug}` }] : []),
+            { name: product.name, path: `/product/${product.slug}` },
+          ]}
         />
         <nav aria-label="Breadcrumb" className="mb-8 font-label text-[10px] tracking-[0.14em] text-muted uppercase">
           <ol className="flex flex-wrap items-center gap-2">

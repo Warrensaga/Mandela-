@@ -11,7 +11,14 @@ export default function CollectionsPage() {
   const { categories, ready } = useSite();
   return (
     <div className="theme-dark">
-      <Seo title="Collections" description="Browse every Mandela Heritage collection: living room, dining, bedroom, office, outdoor and home decor." />
+      <Seo
+        title="Furniture collections"
+        description="Browse every Mandela Heritage collection: living room, dining, bedroom, office, outdoor and home decor, delivered across Kenya."
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Collections', path: '/categories' },
+        ]}
+      />
       <PageBand
         eyebrow="Shop by category"
         title={

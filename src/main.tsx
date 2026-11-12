@@ -24,7 +24,12 @@ if (missing.length > 0) {
 } else {
   // Loaded only after the env check, so a missing variable never crashes module evaluation.
   import('./bootstrap')
-    .then(({ mount }) => mount(root))
+    .then(({ mount }) => {
+      // index.html carries default title/meta for crawlers that skip JavaScript;
+      // each page sets its own from here on, so drop them to avoid duplicates.
+      document.head.querySelectorAll('[data-default]').forEach((el) => el.remove());
+      mount(root);
+    })
     .catch((error: unknown) => {
       console.error(error);
       showStartupError('The site failed to start', 'Please refresh the page. If it keeps happening, check the browser console.');

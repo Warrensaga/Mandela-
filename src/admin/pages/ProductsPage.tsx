@@ -1,17 +1,27 @@
 import { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { useAsync } from '../../hooks/useAsync';
-import { listAllCategories, listProducts } from '../../lib/api/admin';
+import { ApiError, deleteProducts, listAllCategories, listProducts } from '../../lib/api/admin';
 import { formatKES } from '../../lib/format';
+import { useAdmin } from '../auth';
+import { confirmDeleteProducts } from '../confirmDeleteProducts';
 import { Badge, Btn, Empty, inputCls, Loading, Notice, PageHeader, StockPill } from '../components/ui';
 
 export default function ProductsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isOwner } = useAdmin();
   const products = useAsync(listProducts, []);
   const categories = useAsync(listAllCategories, []);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<'all' | 'active' | 'inactive'>('all');
   const [category, setCategory] = useState('');
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState<{ kind: 'success' | 'error'; text: string } | null>(() => {
+    const n = (location.state as { notice?: string } | null)?.notice;
+    return n ? { kind: 'success', text: n } : null;
+  });
 
   const catName = useMemo(() => new Map((categories.data ?? []).map((c) => [c.id, c.name])), [categories.data]);
   const rows = useMemo(() => {
@@ -24,15 +34,51 @@ export default function ProductsPage() {
     );
   }, [products.data, search, status, category, categories.data]);
 
+  // Only rows currently shown can be selected; hidden selections are dropped.
+  const shownIds = rows.map((p) => p.id as string);
+  const selectedShown = shownIds.filter((id) => selected.has(id));
+  const allShownSelected = shownIds.length > 0 && selectedShown.length === shownIds.length;
+
+  const toggle = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  const toggleAll = () => setSelected(allShownSelected ? new Set() : new Set(shownIds));
+
+  const removeSelected = async () => {
+    const chosen = rows.filter((p) => selected.has(p.id as string));
+    if (!chosen.length || !confirmDeleteProducts(chosen.map((p) => p.name ?? 'Unnamed product'))) return;
+    setBusy(true);
+    setNotice(null);
+    try {
+      const r = await deleteProducts(chosen.map((p) => p.id as string));
+      setSelected(new Set());
+      setNotice({ kind: 'success', text: `Deleted ${r.deleted} product${r.deleted === 1 ? '' : 's'}.` });
+      products.reload();
+    } catch (err) {
+      setNotice({ kind: 'error', text: err instanceof ApiError ? err.message : 'Could not delete the products.' });
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <>
       <PageHeader
         title="Products"
-        description="Deactivate products to hide them from the shop; they are never deleted, so past orders stay intact."
+        description={
+          isOwner
+            ? 'Untick "Active" to hide a product and keep it. Delete removes it for good; past orders keep their own copy of each line.'
+            : 'Deactivate products to hide them from the shop. Only the owner can delete products.'
+        }
         actions={<Btn onClick={() => navigate('/admin/products/new')}>New product</Btn>}
       />
       {products.error && <Notice kind="error">{products.error.message}</Notice>}
-      <div className="mb-4 flex flex-wrap gap-3">
+      {notice && <Notice kind={notice.kind} onDismiss={() => setNotice(null)}>{notice.text}</Notice>}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <input type="search" aria-label="Search products" placeholder="Search products" className={`${inputCls} max-w-xs`} value={search} onChange={(e) => setSearch(e.target.value)} />
         <select aria-label="Status" className={`${inputCls} w-auto`} value={status} onChange={(e) => setStatus(e.target.value as typeof status)}>
           <option value="all">All</option>
@@ -54,6 +100,11 @@ export default function ProductsPage() {
               </optgroup>
             ))}
         </select>
+        {isOwner && selectedShown.length > 0 && (
+          <Btn variant="danger" disabled={busy} onClick={removeSelected}>
+            {busy ? 'Deleting…' : `Delete ${selectedShown.length} selected`}
+          </Btn>
+        )}
       </div>
       {products.loading && !products.data ? (
         <Loading />
@@ -64,6 +115,11 @@ export default function ProductsPage() {
           <table className="w-full min-w-[760px] text-sm">
             <thead className="bg-paper-50 text-left text-xs text-muted">
               <tr>
+                {isOwner && (
+                  <th className="w-10 px-3 py-2">
+                    <input type="checkbox" aria-label="Select all shown products" checked={allShownSelected} onChange={toggleAll} className="h-4 w-4" />
+                  </th>
+                )}
                 <th className="px-3 py-2">Product</th>
                 <th className="px-3 py-2">Category</th>
                 <th className="px-3 py-2">Price</th>
@@ -74,6 +130,17 @@ export default function ProductsPage() {
             <tbody className="divide-y divide-paper-200">
               {rows.map((p) => (
                 <tr key={p.id} className={p.is_active ? '' : 'bg-paper-50 text-muted'}>
+                  {isOwner && (
+                    <td className="px-3 py-2">
+                      <input
+                        type="checkbox"
+                        aria-label={`Select ${p.name}`}
+                        checked={selected.has(p.id as string)}
+                        onChange={() => toggle(p.id as string)}
+                        className="h-4 w-4"
+                      />
+                    </td>
+                  )}
                   <td className="px-3 py-2">
                     <Link to={`/admin/products/${p.id}`} className="flex items-center gap-3 hover:underline">
                       {p.primary_image_url ? (

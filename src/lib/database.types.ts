@@ -320,6 +320,7 @@ export type Database = {
       admin_dashboard: { Args: never; Returns: Json };
       admin_decide_access: { Args: { p_user_id: string; p_approve: boolean; p_role?: AdminRole }; Returns: undefined };
       admin_delete_order: { Args: { p_order_id: string }; Returns: string };
+      admin_delete_products: { Args: { p_product_ids: string[] }; Returns: Json };
       admin_set_sort_order: { Args: { p_table: string; p_ids: string[] }; Returns: undefined };
       admin_option_usage: { Args: { p_product_id: string }; Returns: Json };
       admin_set_product_options: { Args: { p_product_id: string; p_options: Json; p_renames?: Json }; Returns: Json };

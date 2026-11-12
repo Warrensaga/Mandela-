@@ -18,7 +18,7 @@ insert into public.settings (key, value, is_public) values
   ('deposit_percent', '50', true),
   ('contact', '{
       "phone": "+254 701 333 358",
-      "email": "hello@example.com",
+      "email": "",
       "address": "Showroom address to be confirmed, Nairobi",
       "map_url": null
     }', true),

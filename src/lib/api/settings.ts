@@ -1,6 +1,7 @@
 import { supabase } from '../supabase';
 import type { Json } from '../database.types';
 import { env } from '../env';
+import { isHttpsUrl, safeLink } from '../url';
 import { toApiError } from './errors';
 import type { DeliveryZone, SiteSettings } from './types';
 
@@ -51,7 +52,7 @@ export async function fetchSettings(): Promise<SiteSettings> {
   const bank = obj(payment.bank);
   const announcement = obj(map.get('announcement_bar'));
   const social = obj(map.get('social'));
-  const httpsUrl = (v: unknown) => (typeof v === 'string' && /^https:\/\//.test(v) ? v : '');
+  const httpsUrl = (v: unknown) => (typeof v === 'string' && isHttpsUrl(v.trim()) ? v.trim() : '');
   const hours = map.get('opening_hours');
   const deposit = Number(map.get('deposit_percent'));
 
@@ -83,7 +84,7 @@ export async function fetchSettings(): Promise<SiteSettings> {
     announcement: {
       enabled: announcement.enabled === true,
       text: str(announcement.text),
-      link: typeof announcement.link === 'string' ? announcement.link : null,
+      link: safeLink(announcement.link),
     },
     social: { tiktok: httpsUrl(social.tiktok), instagram: httpsUrl(social.instagram) },
   };

@@ -3,6 +3,7 @@ import { useAsync } from '../../hooks/useAsync';
 import type { HeroSlideRow } from '../../lib/database.types';
 import { ApiError, deleteHeroSlide, listHeroSlides, saveHeroSlide, setSortOrder } from '../../lib/api/admin';
 import { formatLongDate } from '../../lib/format';
+import { isSafeLink } from '../../lib/url';
 import { ImageField } from '../components/ImageField';
 import { SortableList } from '../components/SortableList';
 import { Badge, Btn, Card, Empty, inputCls, LabeledField, Loading, Modal, Notice, PageHeader, Toggle } from '../components/ui';
@@ -51,7 +52,7 @@ export default function HeroSlidesPage() {
     const errors: string[] = [];
     if (!draft.headline?.trim()) errors.push('Headline is required.');
     if (!draft.image_url) errors.push('Upload a desktop image.');
-    if (draft.cta_url && !/^(\/|https:\/\/)/.test(draft.cta_url)) errors.push('Button link must start with / (a shop page) or https://.');
+    if (draft.cta_url?.trim() && !isSafeLink(draft.cta_url.trim())) errors.push('Button link must start with / (a shop page) or https://.');
     if (draft.cta_url && !draft.cta_label) errors.push('Add a button label for the link.');
     if (draft.starts_at && draft.ends_at && new Date(draft.ends_at) <= new Date(draft.starts_at)) errors.push('End must be after start.');
     if (errors.length) return setMsg({ kind: 'error', text: errors.join(' ') });

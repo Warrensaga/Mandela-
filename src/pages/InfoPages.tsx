@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { PageBand } from '../components/layout/PageBand';
 import { ButtonAnchor, ButtonLink } from '../components/ui/Button';
 import { WhatsAppIcon } from '../components/ui/Icon';
-import { Seo } from '../components/ui/Seo';
+import { nodeText, Seo } from '../components/ui/Seo';
+import { faqLd } from '../lib/seo';
 import type { DeliveryZone, SiteSettings } from '../lib/api';
 import { formatKES } from '../lib/format';
 import { whatsappLink } from '../lib/whatsapp';
@@ -33,10 +34,33 @@ function HelpCta() {
   );
 }
 
-function Shell({ eyebrow, title, description, crumb, children }: { eyebrow: string; title: string; description: string; crumb: string; children: ReactNode }) {
+function Shell({
+  eyebrow,
+  title,
+  description,
+  crumb,
+  jsonLd,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  crumb: string;
+  jsonLd?: object;
+  children: ReactNode;
+}) {
+  const { pathname } = useLocation();
   return (
     <>
-      <Seo title={title} description={description} />
+      <Seo
+        title={title}
+        description={description}
+        jsonLd={jsonLd}
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: crumb, path: pathname },
+        ]}
+      />
       <PageBand tone="light" eyebrow={eyebrow} title={title} description={description} crumbs={[{ to: '/', label: 'Home' }, { label: crumb }]} />
       <div className="container-page max-w-4xl py-12 sm:py-16">
         {children}
@@ -191,7 +215,13 @@ export function FaqPage() {
     },
   ];
   return (
-    <Shell eyebrow="Help" title="Frequently asked questions" crumb="FAQs" description="Ordering, paying, delivery and custom pieces.">
+    <Shell
+      eyebrow="Help"
+      title="Frequently asked questions"
+      crumb="FAQs"
+      description="Ordering, paying, delivery and custom pieces."
+      jsonLd={faqLd(faqs.map((f) => ({ q: f.q, a: nodeText(f.a) })))}
+    >
       <div className="divide-y divide-paper-200 border-y border-paper-200">
         {faqs.map((f, i) => (
           <details key={f.q} className="group" open={i === 0}>
