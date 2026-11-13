@@ -38,7 +38,7 @@ import NotFoundPage from './NotFoundPage';
 
 function ProductSkeleton() {
   return (
-    <div className="theme-dark"><div className="container-page grid gap-10 py-10 lg:grid-cols-[1.15fr_1fr]">
+    <div><div className="container-page grid gap-10 py-10 lg:grid-cols-[1.15fr_1fr]">
       <Skeleton className="aspect-[4/3] w-full rounded-none" />
       <div className="space-y-4">
         <Skeleton className="h-10 w-3/4" />
@@ -139,7 +139,10 @@ function ProductView({ product }: { product: ProductDetail }) {
 
 
   let buttonLabel = 'Add to cart';
-  if (missing.length) buttonLabel = `Choose ${missing.join(' and ').toLowerCase()}`;
+  if (missing.length) {
+    const names = missing.map((m) => m.toLowerCase());
+    buttonLabel = `Choose ${names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0]}`;
+  }
   else if (product.hasVariants && !variant) buttonLabel = 'Not available';
   else if (!canBuy) buttonLabel = 'Out of stock';
 
@@ -150,7 +153,7 @@ function ProductView({ product }: { product: ProductDetail }) {
   };
 
   return (
-    <div className="theme-dark">
+    <div>
       <div className="container-page py-8 sm:py-12">
         <Seo
           // Matches how Kenyans search: "<product> price in Kenya". Price first in the description.
@@ -169,15 +172,15 @@ function ProductView({ product }: { product: ProductDetail }) {
             { name: product.name, path: `/product/${product.slug}` },
           ]}
         />
-        <nav aria-label="Breadcrumb" className="mb-8 font-label text-[10px] tracking-[0.14em] text-muted uppercase">
+        <nav aria-label="Breadcrumb" className="mb-6 text-[13px] text-muted">
           <ol className="flex flex-wrap items-center gap-2">
-            <li><Link to="/" className="tap hover:text-gold-500">Home</Link></li>
+            <li><Link to="/" className="tap hover:text-brand-600">Home</Link></li>
             <li aria-hidden="true">/</li>
-            <li><Link to="/shop" className="tap hover:text-gold-500">Shop</Link></li>
+            <li><Link to="/shop" className="tap hover:text-brand-600">Shop</Link></li>
             {category && (
               <>
                 <li aria-hidden="true">/</li>
-                <li><Link to={`/category/${category.slug}`} className="tap hover:text-gold-500">{category.name}</Link></li>
+                <li><Link to={`/category/${category.slug}`} className="tap hover:text-brand-600">{category.name}</Link></li>
               </>
             )}
             <li aria-hidden="true">/</li>
@@ -192,15 +195,15 @@ function ProductView({ product }: { product: ProductDetail }) {
 
           <div>
             {category && <p className="eyebrow">{category.name}</p>}
-            <h1 className="mt-3 text-4xl leading-[1.05] uppercase sm:text-5xl">{product.name}</h1>
+            <h1 className="mt-2 text-4xl leading-tight sm:text-5xl">{product.name}</h1>
             <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
               <Price amount={price} compareAt={compareAt} from={product.hasVariants && !variant && range.min !== range.max} size="lg" />
-              {complete ? <StockBadge state={stockInfo} /> : <span className="label-mono text-muted">Choose options</span>}
+              {complete && <StockBadge state={stockInfo} />}
             </div>
             <div className="mt-3"><ProductBadges product={product} /></div>
             {product.description && <p className="mt-6 leading-relaxed text-ink/85">{product.description}</p>}
             {(product.dimensions || product.materials) && (
-              <p className="label-mono mt-4 leading-relaxed text-muted">
+              <p className="mt-4 text-sm leading-relaxed text-muted">
                 {[product.dimensions, product.materials].filter(Boolean).join(' · ')}
               </p>
             )}
@@ -217,7 +220,7 @@ function ProductView({ product }: { product: ProductDetail }) {
 
             <Link
               to="/custom-request"
-              className="group mt-8 flex items-center justify-between gap-4 border border-paper-200 bg-paper-100 p-4 transition-colors hover:border-gold-500"
+              className="group mt-8 flex items-center justify-between gap-4 border border-paper-200 bg-paper-100 p-4 transition-colors hover:border-brand-600"
             >
               <span>
                 <span className="block text-sm font-medium text-navy-800">Customise this piece</span>
@@ -281,13 +284,10 @@ function ProductView({ product }: { product: ProductDetail }) {
 
         <section aria-labelledby="related-heading" className="mt-20 border-t border-paper-200 pt-12">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="eyebrow eyebrow-line">Keep browsing</p>
-              <h2 id="related-heading" className="mt-3 text-4xl sm:text-5xl">You may also like</h2>
-            </div>
+            <h2 id="related-heading" className="text-3xl sm:text-4xl">More like this</h2>
             {category && (
-              <Link to={`/category/${category.slug}`} className="label-mono tap text-navy-600 hover:text-gold-400">
-                More in {category.name} ↗
+              <Link to={`/category/${category.slug}`} className="tap text-sm font-semibold text-navy-800 underline decoration-paper-300 underline-offset-[6px] hover:text-brand-600 hover:decoration-brand-600">
+                More in {category.name}
               </Link>
             )}
           </div>

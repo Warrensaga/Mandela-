@@ -11,7 +11,7 @@ import { useSite } from '../state/site';
 export default function CollectionsPage() {
   const { categories, ready } = useSite();
   return (
-    <div className="theme-dark">
+    <div>
       <Seo
         title={PAGE_KEYWORDS.collections.title}
         description={PAGE_KEYWORDS.collections.description}
@@ -21,13 +21,8 @@ export default function CollectionsPage() {
         ]}
       />
       <PageBand
-        eyebrow="Shop by category"
-        title={
-          <>
-            The <em className="text-gold-400">collections</em>
-          </>
-        }
-        description={ready ? `${categories.length} collections, each piece made with care in our Nairobi workshop.` : undefined}
+        title="All categories"
+        description="Sofas, beds, dining, office and outdoor furniture, made in our Nairobi workshop."
         crumbs={[{ to: '/', label: 'Home' }, { label: 'Collections' }]}
         aside={
           <div className="flex gap-3">

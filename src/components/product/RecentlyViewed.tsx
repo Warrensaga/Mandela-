@@ -26,8 +26,7 @@ export function RecentlyViewed({ excludeId, limit = 4 }: { excludeId?: string; l
 
   return (
     <section aria-labelledby="recent-heading" className="mt-20 border-t border-paper-200 pt-12">
-      <p className="eyebrow eyebrow-line">Pick up where you left off</p>
-      <h2 id="recent-heading" className="mt-3 mb-8 text-4xl sm:text-5xl">Recently viewed</h2>
+      <h2 id="recent-heading" className="mb-8 text-3xl sm:text-4xl">Recently viewed</h2>
       <ProductGrid products={products} />
     </section>
   );

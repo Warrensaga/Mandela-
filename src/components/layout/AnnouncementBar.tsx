@@ -3,9 +3,12 @@ import { formatKePhone } from '../../lib/phone';
 import { useSite } from '../../state/site';
 import { InstagramIcon, TikTokIcon } from '../ui/Icon';
 
+const linkStyle = 'underline decoration-white/40 underline-offset-4 transition-colors hover:decoration-white';
+
 /**
- * Brand-blue top strip: social icons on the left, call/WhatsApp number and the
- * announcement from Settings on the right. On phones only the number shows.
+ * Thin logo-blue strip above the header: social icons on the left, the
+ * announcement from Settings in the centre, call/WhatsApp number on the right.
+ * Below desktop width only the announcement shows (or the number when there is none).
  */
 export function AnnouncementBar() {
   const { settings } = useSite();
@@ -21,46 +24,48 @@ export function AnnouncementBar() {
   const announcement = showAnnouncement ? (
     a.link ? (
       a.link.startsWith('/') ? (
-        <Link to={a.link} className="hover:text-gold-300">{a.text}</Link>
+        <Link to={a.link} className={linkStyle}>{a.text}</Link>
       ) : (
-        <a href={a.link} className="hover:text-gold-300" rel="noopener">{a.text}</a>
+        <a href={a.link} className={linkStyle} rel="noopener">{a.text}</a>
       )
     ) : (
       <span>{a.text}</span>
     )
   ) : null;
 
+  const phoneLink = phone ? (
+    <span>
+      Call or WhatsApp{' '}
+      <a href={`tel:${phone.replace(/\s/g, '')}`} className={`tap font-semibold ${linkStyle}`}>
+        {formatKePhone(phone)}
+      </a>
+    </span>
+  ) : null;
+
   return (
-    <div className="bg-brand-600 text-white">
-      <div className="container-page flex min-h-9 items-center justify-center gap-x-6 font-label text-[10px] font-bold tracking-[0.18em] uppercase sm:justify-between sm:text-[11px]">
-        {social.length > 0 && (
-          <ul className="hidden items-center gap-1 sm:flex" aria-label="Follow us">
-            {social.map(({ href, label, Icon }) => (
-              <li key={label}>
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${settings.storeName} on ${label} (opens in a new tab)`}
-                  className="grid h-9 w-9 place-items-center text-white/90 transition-colors hover:text-gold-300"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
-        <div className="flex items-center gap-x-6 py-2">
-          {announcement && <span className="hidden text-white/85 lg:inline">{announcement}</span>}
-          {phone && (
-            <span>
-              Call or WhatsApp{' '}
-              <a href={`tel:${phone.replace(/\s/g, '')}`} className="tap text-gold-300 hover:text-white">
-                {formatKePhone(phone)}
-              </a>
-            </span>
+    <div className="bg-logo-600 text-white">
+      <div className="container-page grid min-h-9 items-center gap-x-6 py-1.5 text-center text-[13px] font-medium lg:grid-cols-[1fr_auto_1fr]">
+        <div className="hidden lg:flex">
+          {social.length > 0 && (
+            <ul className="-ml-2 flex items-center" aria-label="Follow us">
+              {social.map(({ href, label, Icon }) => (
+                <li key={label}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${settings.storeName} on ${label} (opens in a new tab)`}
+                    className="grid h-9 w-9 place-items-center text-white/85 transition-colors hover:text-white"
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
+        <p>{announcement ?? <span className="lg:hidden">{phoneLink}</span>}</p>
+        <p className="hidden justify-end lg:flex">{phoneLink}</p>
       </div>
     </div>
   );

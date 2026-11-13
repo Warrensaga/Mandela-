@@ -36,7 +36,6 @@ function HelpCta() {
 }
 
 function Shell({
-  eyebrow,
   title,
   description,
   crumb,
@@ -44,7 +43,6 @@ function Shell({
   seo,
   children,
 }: {
-  eyebrow: string;
   title: string;
   description: string;
   crumb: string;
@@ -65,7 +63,7 @@ function Shell({
           { name: crumb, path: pathname },
         ]}
       />
-      <PageBand tone="light" eyebrow={eyebrow} title={title} description={description} crumbs={[{ to: '/', label: 'Home' }, { label: crumb }]} />
+      <PageBand title={title} description={description} crumbs={[{ to: '/', label: 'Home' }, { label: crumb }]} />
       <div className="container-page max-w-4xl py-12 sm:py-16">
         {children}
         <HelpCta />
@@ -78,7 +76,7 @@ export function DeliveryPage() {
   const { zones, settings } = useSite();
   const free = zones.filter((z) => z.freeThreshold !== null);
   return (
-    <Shell eyebrow="Help" title="Delivery" crumb="Delivery" seo={PAGE_KEYWORDS.delivery} description="Where we deliver, what it costs and how long it takes. Delivery is within Kenya only.">
+    <Shell title="Delivery" crumb="Delivery" seo={PAGE_KEYWORDS.delivery} description="Where we deliver, what it costs and how long it takes. Delivery is within Kenya only.">
       <h2 className="text-3xl">Delivery areas and fees</h2>
       <p className="mt-3 text-muted">Choose your area at checkout and the fee is added to your order. Estimates are for pieces in stock.</p>
       <div className="mt-6 overflow-x-auto border border-paper-200">
@@ -160,7 +158,7 @@ function PaymentMethods({ payment }: { payment: SiteSettings['payment'] }) {
 export function PaymentPage() {
   const { settings } = useSite();
   return (
-    <Shell eyebrow="Help" title="Payment options" crumb="Payment" seo={PAGE_KEYWORDS.payment} description="No payment is taken on this website. We confirm your order first, then you pay by M-Pesa or bank transfer.">
+    <Shell title="Payment options" crumb="Payment" seo={PAGE_KEYWORDS.payment} description="No payment is taken on this website. We confirm your order first, then you pay by M-Pesa or bank transfer.">
       <h2 className="text-3xl">How paying works</h2>
       <ol className="mt-4 space-y-3 text-muted">
         <li><strong className="text-navy-800">1. Place your order online.</strong> Nothing is charged.</li>
@@ -220,7 +218,6 @@ export function FaqPage() {
   ];
   return (
     <Shell
-      eyebrow="Help"
       title="Frequently asked questions"
       crumb="FAQs"
       description="Ordering, paying, delivery and custom pieces."

@@ -29,8 +29,6 @@ export default function SavedPage() {
     <>
       <Seo title="Saved items" noindex />
       <PageBand
-        tone="light"
-        eyebrow="Your list"
         title="Saved items"
         description="Pieces you have saved on this phone or computer. Send the list to us on WhatsApp for prices, availability or a quote."
         crumbs={[{ to: '/', label: 'Home' }, { label: 'Saved items' }]}

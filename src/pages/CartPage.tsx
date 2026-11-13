@@ -36,7 +36,7 @@ export default function CartPage() {
               </div>
             </dl>
             {cart.hasMadeToOrder && (
-              <p className="mt-4 rounded-lg bg-paper-100 p-3 text-xs text-navy-800">
+              <p className="mt-4 bg-paper-100 p-3 text-xs text-navy-800">
                 Your cart has made-to-order pieces. We will ask for a deposit to start production.
               </p>
             )}
