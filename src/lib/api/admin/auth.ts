@@ -60,10 +60,20 @@ export async function changePassword(password: string): Promise<void> {
 /** Resolves the signed-in user and their admin role (from admin_users, own row only). */
 export async function getIdentity(session: Session | null): Promise<AdminIdentity | null> {
   if (!session) return null;
-  const [admin, request] = await Promise.all([
-    supabase.from('admin_users').select('role').eq('user_id', session.user.id).maybeSingle(),
-    supabase.from('admin_access_requests').select('status').eq('user_id', session.user.id).maybeSingle(),
-  ]);
+  const load = () =>
+    Promise.all([
+      supabase.from('admin_users').select('role').eq('user_id', session.user.id).maybeSingle(),
+      supabase.from('admin_access_requests').select('status').eq('user_id', session.user.id).maybeSingle(),
+    ]);
+  let [admin, request] = await load();
+  // A tab that slept past the token's expiry can send one stale token
+  // (PostgREST PGRST303 / 401). Refresh once and retry; if the refresh itself
+  // fails the session is over and the user signs in again.
+  if (admin.error && isExpiredToken(admin.error)) {
+    const { error } = await supabase.auth.refreshSession();
+    if (error) return null;
+    [admin, request] = await load();
+  }
   if (admin.error) throw toApiError(admin.error);
   return {
     userId: session.user.id,
@@ -73,8 +83,28 @@ export async function getIdentity(session: Session | null): Promise<AdminIdentit
   };
 }
 
+function isExpiredToken(error: { code?: string; message?: string }): boolean {
+  return error.code === 'PGRST303' || error.code === 'PGRST301' || /jwt expired/i.test(error.message ?? '');
+}
+
+/**
+ * Calls back with the current session, then on every sign-in, sign-out and
+ * token refresh. Supabase sends the current session as its first event
+ * (INITIAL_SESSION), so there is no separate getSession() call to race with.
+ * The callback is deferred: running database queries inside Supabase's own
+ * auth callback can deadlock its session lock.
+ */
 export function onAuthChange(callback: (session: Session | null) => void): () => void {
-  supabase.auth.getSession().then(({ data }) => callback(data.session));
-  const { data } = supabase.auth.onAuthStateChange((_event, session) => callback(session));
-  return () => data.subscription.unsubscribe();
+  const timers = new Set<ReturnType<typeof setTimeout>>();
+  const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+    const t = setTimeout(() => {
+      timers.delete(t);
+      callback(session);
+    }, 0);
+    timers.add(t);
+  });
+  return () => {
+    timers.forEach(clearTimeout);
+    data.subscription.unsubscribe();
+  };
 }
