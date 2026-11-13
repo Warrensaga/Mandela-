@@ -21,16 +21,23 @@ type State = { status: 'loading' } | { status: 'signed_out' } | { status: 'ready
 export function useAdminSession(): State {
   const [state, setState] = useState<State>({ status: 'loading' });
   useEffect(() => {
-    let active = true;
-    return onAuthChange((session) => {
+    // Only the newest check may set state: an older, slower one (for example
+    // sent with a token that has since been refreshed) must not overwrite it.
+    let latest = 0;
+    const unsubscribe = onAuthChange((session) => {
+      const run = ++latest;
       if (!session) {
-        if (active) setState({ status: 'signed_out' });
+        setState({ status: 'signed_out' });
         return;
       }
       getIdentity(session)
-        .then((identity) => active && setState(identity ? { status: 'ready', identity } : { status: 'signed_out' }))
-        .catch((e: unknown) => active && setState({ status: 'error', message: e instanceof Error ? e.message : 'Could not check your account.' }));
+        .then((identity) => run === latest && setState(identity ? { status: 'ready', identity } : { status: 'signed_out' }))
+        .catch((e: unknown) => run === latest && setState({ status: 'error', message: e instanceof Error ? e.message : 'Could not check your account.' }));
     });
+    return () => {
+      latest = -1;
+      unsubscribe();
+    };
   }, []);
   return state;
 }
