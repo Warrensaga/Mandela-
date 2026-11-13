@@ -130,6 +130,25 @@ export type ReviewRow = {
   updated_at: string;
 };
 
+/** A home, office or other space the business has furnished (owner-entered). */
+export type ProjectRow = {
+  id: string;
+  title: string;
+  slug: string;
+  space_type: string | null;
+  location: string | null;
+  completed_on: string | null;
+  summary: string | null;
+  body: string | null;
+  scope: string[];
+  cover_image_url: string | null;
+  gallery: string[];
+  is_published: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
 export type DeliveryZoneRow = {
   id: string;
   name: string;
@@ -304,6 +323,7 @@ export type Database = {
       delivery_zones: Table<DeliveryZoneRow, 'name'>;
       reviews: Table<ReviewRow, 'author_name' | 'rating' | 'body'>;
       guides: Table<GuideRow, 'slug' | 'title'>;
+      projects: Table<ProjectRow, 'slug' | 'title'>;
       hero_slides: Table<HeroSlideRow, 'headline' | 'image_url'>;
       inventory_movements: Table<InventoryMovementRow, 'change_quantity' | 'product_id' | 'reason'>;
       order_items: Table<OrderItemRow, 'line_total' | 'order_id' | 'product_name_snapshot' | 'quantity' | 'unit_price_snapshot'>;

@@ -10,6 +10,7 @@ import {
   ShopByCategory,
   StayInTouch,
 } from '../components/home/HomeSections';
+import { RecentProjects } from '../components/home/RecentProjects';
 import { ShopIntro } from '../components/home/ShopIntro';
 import { Seo } from '../components/ui/Seo';
 import { useAsync } from '../hooks/useAsync';
@@ -22,7 +23,7 @@ import { useSite } from '../state/site';
 /**
  * Home page, top to bottom: hero, service facts, categories, best sellers
  * (or featured pieces until there are enough real orders), new arrivals,
- * offers, rooms, how ordering works, Google reviews (or delivery fees),
+ * offers, rooms, furnishing projects (once published), how ordering works, Google reviews (or delivery fees),
  * social follow, custom orders and the shop introduction.
  */
 export default function HomePage() {
@@ -84,6 +85,7 @@ export default function HomePage() {
 
       <OffersFeature products={products} />
       <InteriorInspiration products={products} />
+      <RecentProjects />
       <PromiseSection />
       <GoogleReviews />
       <StayInTouch />

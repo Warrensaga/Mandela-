@@ -218,6 +218,40 @@ export function itemListLd(name: string, path: string, products: Pick<ProductSum
   };
 }
 
+/** The projects page as a list of furnished spaces. */
+export function projectListLd(projects: { slug: string; title: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Furnishing projects',
+    url: absUrl('/projects'),
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: projects.length,
+      itemListElement: projects.slice(0, 50).map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: absUrl(`/projects/${p.slug}`), name: p.title })),
+    },
+  };
+}
+
+/** One furnishing project: a photo set by the business, described as a creative work. */
+export function projectLd(
+  p: { slug: string; title: string; summary: string | null; completedOn: string | null; location: string | null; coverImageUrl: string | null; gallery: string[] },
+  settings: SiteSettings,
+) {
+  const images = [p.coverImageUrl, ...p.gallery].filter((u): u is string => Boolean(u)).slice(0, 10);
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: p.title,
+    url: absUrl(`/projects/${p.slug}`),
+    ...(p.summary ? { description: p.summary } : {}),
+    ...(images.length ? { image: images } : {}),
+    ...(p.completedOn ? { dateCreated: p.completedOn } : {}),
+    ...(p.location ? { locationCreated: { '@type': 'Place', name: p.location } } : {}),
+    creator: { '@type': 'FurnitureStore', name: settings.storeName, url: absUrl('/') },
+  };
+}
+
 export function faqLd(items: { q: string; a: string }[]) {
   return {
     '@context': 'https://schema.org',

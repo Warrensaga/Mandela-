@@ -56,7 +56,7 @@ export async function deletePublicImage(url: string): Promise<void> {
 }
 
 export async function setSortOrder(
-  table: 'categories' | 'hero_slides' | 'product_images' | 'product_options' | 'product_variants' | 'delivery_zones' | 'reviews',
+  table: 'categories' | 'hero_slides' | 'product_images' | 'product_options' | 'product_variants' | 'delivery_zones' | 'reviews' | 'projects',
   ids: string[],
 ): Promise<void> {
   const { error } = await supabase.rpc('admin_set_sort_order', { p_table: table, p_ids: ids });

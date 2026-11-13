@@ -1,5 +1,5 @@
 /**
- * Vercel Routing Middleware: product and category link previews.
+ * Vercel Routing Middleware: product, category and project link previews.
  *
  * WhatsApp, Facebook, X, Telegram and other link-preview bots do not run
  * JavaScript, so on a single-page app they would only see the site defaults.
@@ -16,7 +16,7 @@ import { categoryKeywords } from './src/lib/seoKeywords';
 declare const process: { env: Record<string, string | undefined> };
 
 export const config = {
-  matcher: ['/product/:slug*', '/category/:slug*'],
+  matcher: ['/product/:slug*', '/category/:slug*', '/projects/:slug*'],
 };
 
 const BOTS =
@@ -86,6 +86,21 @@ async function categoryMeta(slug: string, store: string): Promise<Meta | null> {
   };
 }
 
+async function projectMeta(slug: string, store: string): Promise<Meta | null> {
+  const rows = await query<{ title: string; summary: string | null; space_type: string | null; location: string | null; cover_image_url: string | null; gallery: string[] | null }>(
+    `projects?select=title,summary,space_type,location,cover_image_url,gallery&slug=eq.${encodeURIComponent(slug)}&is_published=eq.true&limit=1`,
+  );
+  const p = rows[0];
+  if (!p) return null;
+  const where = [p.space_type, p.location].filter(Boolean).join(', ');
+  return {
+    title: `${p.title}: Furnishing Project | Mandela Heritage`,
+    description: clip(p.summary ?? `${p.title}${where ? `, ${where}` : ''}: a space furnished by ${store}.`),
+    image: p.cover_image_url ?? p.gallery?.[0] ?? null,
+    type: 'website',
+  };
+}
+
 function headTags(meta: Meta, url: string, site: string, store: string): string {
   const image = meta.image && /^https:\/\//.test(meta.image) ? meta.image : `${site}/logo.png`;
   const tags = [
@@ -115,7 +130,7 @@ export default async function middleware(request: Request): Promise<Response | u
   if (request.method !== 'GET' || !BOTS.test(request.headers.get('user-agent') ?? '')) return undefined;
 
   const url = new URL(request.url);
-  const m = /^\/(product|category)\/([^/]+)\/?$/.exec(url.pathname);
+  const m = /^\/(product|category|projects)\/([^/]+)\/?$/.exec(url.pathname);
   const slug = m?.[2] ? decodeURIComponent(m[2]) : '';
   if (!m || !SLUG.test(slug)) return undefined;
 
@@ -125,7 +140,7 @@ export default async function middleware(request: Request): Promise<Response | u
 
   try {
     const [meta, page] = await Promise.all([
-      m[1] === 'product' ? productMeta(slug, store) : categoryMeta(slug, store),
+      m[1] === 'product' ? productMeta(slug, store) : m[1] === 'projects' ? projectMeta(slug, store) : categoryMeta(slug, store),
       fetch(new URL('/index.html', url), { signal: AbortSignal.timeout(1500) }).then((r) => (r.ok ? r.text() : '')),
     ]);
     if (!meta || !page.includes('</head>')) return undefined;

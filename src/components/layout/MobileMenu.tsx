@@ -78,6 +78,11 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
             </Link>
           </li>
           <li>
+            <Link to="/projects" onClick={onClose} className="block py-2 text-navy-800">
+              Projects we have furnished
+            </Link>
+          </li>
+          <li>
             <Link to="/track-order" onClick={onClose} className="block py-2 text-navy-800">
               Track your order
             </Link>

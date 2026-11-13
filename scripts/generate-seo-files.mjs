@@ -8,6 +8,7 @@
 //   /sitemap-pages.xml       home, shop, help pages
 //   /sitemap-categories.xml  categories that have at least one active product
 //   /sitemap-products.xml    active products + their images
+//   /sitemap-projects.xml    published furnishing projects + their photos
 //
 // Data comes from Supabase with the public anon key, so only what visitors can
 // already see is listed. The sitemap is rebuilt on every deploy: redeploy on
@@ -130,7 +131,7 @@ ${site ? `\nSitemap: ${site}/sitemap.xml\n` : ''}`;
 }
 
 /** Static pages, highest value first. */
-const STATIC_PAGES = ['/', '/shop', '/categories', '/custom-request', '/contact', '/delivery', '/payment', '/faq', '/track-order'];
+const STATIC_PAGES = ['/', '/shop', '/categories', '/projects', '/custom-request', '/contact', '/delivery', '/payment', '/faq', '/track-order'];
 
 async function main() {
   if (!existsSync(DIST)) throw new Error('dist/ not found: run vite build first');
@@ -151,12 +152,15 @@ async function main() {
   let categories = [];
   let products = [];
   let images = [];
+  let projects = [];
   try {
     [categories, products, images] = await Promise.all([
       fetchTable('categories?select=id,parent_id,slug&is_active=eq.true&order=sort_order'),
       fetchTable('products?select=id,slug,category_id,updated_at&is_active=eq.true&order=created_at.desc'),
       fetchTable('product_images?select=product_id,url,sort_order&order=sort_order'),
     ]);
+    // Separate request: a missing projects table must not hide the catalogue.
+    projects = await fetchTable('projects?select=slug,updated_at,cover_image_url,gallery&is_published=eq.true&order=sort_order').catch(() => []);
   } catch (err) {
     console.warn(`[seo] Could not load catalogue (${err.message}); writing page sitemap only.`);
   }
@@ -206,9 +210,19 @@ async function main() {
     files.push({ name: 'sitemap-products.xml', lastmod: isoDate(latestProduct) });
   }
 
+  const projs = projects.map((p) => ({
+    loc: `${site}/projects/${encodeURIComponent(p.slug)}`,
+    lastmod: isoDate(p.updated_at),
+    images: [...new Set([p.cover_image_url, ...(p.gallery ?? [])].filter(Boolean).map(abs))].slice(0, 10),
+  }));
+  if (projs.length) {
+    writeFileSync(resolve(DIST, 'sitemap-projects.xml'), urlset(projs, true));
+    files.push({ name: 'sitemap-projects.xml', lastmod: isoDate(projects.reduce((m, p) => (p.updated_at > m ? p.updated_at : m), '')) });
+  }
+
   writeFileSync(resolve(DIST, 'sitemap.xml'), sitemapIndex(site, files));
   writeFileSync(resolve(DIST, 'robots.txt'), robots(site));
-  console.log(`[seo] ${site}: sitemap.xml with ${pages.length} pages, ${cats.length} categories, ${prods.length} products; robots.txt written.`);
+  console.log(`[seo] ${site}: sitemap.xml with ${pages.length} pages, ${cats.length} categories, ${prods.length} products, ${projs.length} projects; robots.txt written.`);
 }
 
 main().catch((err) => {
