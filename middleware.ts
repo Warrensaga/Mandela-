@@ -11,7 +11,11 @@
  * Any problem (unknown slug, slow database) falls back to the normal page.
  */
 
-import { categoryKeywords } from './src/lib/seoKeywords';
+// Deliberately no imports: Vercel loads this file on its own, and a relative
+// import it cannot resolve makes every matched page fail with
+// MIDDLEWARE_INVOCATION_FAILED, for people as well as bots. Category search
+// titles come from /seo-categories.json, written by the Vite build from
+// src/lib/seoKeywords.ts (the same text the category pages use).
 
 declare const process: { env: Record<string, string | undefined> };
 
@@ -70,14 +74,28 @@ async function productMeta(slug: string, store: string): Promise<Meta | null> {
   return { title: `${p.name} Price in Kenya | Mandela Heritage`, description: clip(text), image: p.primary_image_url, type: 'product', price: min > 0 ? min : undefined };
 }
 
-async function categoryMeta(slug: string, store: string): Promise<Meta | null> {
+type KeywordMap = Record<string, { title: string; lead: string }>;
+let keywordCache: Promise<KeywordMap> | null = null;
+
+function categoryKeywordMap(origin: string): Promise<KeywordMap> {
+  keywordCache ??= fetch(new URL('/seo-categories.json', origin), { signal: AbortSignal.timeout(1500) })
+    .then((r) => (r.ok ? (r.json() as Promise<KeywordMap>) : {}))
+    .catch(() => {
+      keywordCache = null; // try again on the next request
+      return {};
+    });
+  return keywordCache;
+}
+
+async function categoryMeta(slug: string, store: string, origin: string): Promise<Meta | null> {
+  const keywords = categoryKeywordMap(origin);
   const rows = await query<{ name: string; description: string | null; image_url: string | null }>(
     `categories?select=name,description,image_url&slug=eq.${encodeURIComponent(slug)}&is_active=eq.true&limit=1`,
   );
   const c = rows[0];
   if (!c) return null;
   // Same keyword titles and lead sentences as the category pages.
-  const kw = categoryKeywords({ slug, name: c.name });
+  const kw = (await keywords)[slug] ?? { title: `${c.name} in Kenya & Prices`, lead: `${c.name} in Kenya with prices online` };
   return {
     title: `${kw.title} | Mandela Heritage`,
     description: clip(`${kw.lead}. Made in our Nairobi workshop and delivered across Kenya, with fast delivery in Nairobi.`),
@@ -140,7 +158,7 @@ export default async function middleware(request: Request): Promise<Response | u
 
   try {
     const [meta, page] = await Promise.all([
-      m[1] === 'product' ? productMeta(slug, store) : m[1] === 'projects' ? projectMeta(slug, store) : categoryMeta(slug, store),
+      m[1] === 'product' ? productMeta(slug, store) : m[1] === 'projects' ? projectMeta(slug, store) : categoryMeta(slug, store, url.origin),
       fetch(new URL('/index.html', url), { signal: AbortSignal.timeout(1500) }).then((r) => (r.ok ? r.text() : '')),
     ]);
     if (!meta || !page.includes('</head>')) return undefined;

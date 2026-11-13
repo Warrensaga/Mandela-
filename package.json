@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && node scripts/generate-seo-files.mjs",
+    "build": "node scripts/check-middleware.mjs && tsc -b && vite build && node scripts/generate-seo-files.mjs",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "seo:files": "node scripts/generate-seo-files.mjs"
