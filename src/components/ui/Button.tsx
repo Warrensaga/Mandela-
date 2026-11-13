@@ -4,23 +4,23 @@ import { Link, type LinkProps } from 'react-router';
 type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'whatsapp';
 type Size = 'sm' | 'md' | 'lg';
 
-// Square, uppercase letter-spaced buttons in the label font. On `theme-dark`
-// sections the primary button flips to a light fill automatically.
+// Square, uppercase buttons in the label font. On `theme-dark` sections the
+// primary button flips to a light fill automatically.
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-none font-label font-bold uppercase tracking-[0.14em] transition-[background-color,color,border-color,transform] duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98] select-none';
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-none font-label font-semibold uppercase tracking-[0.12em] transition-[background-color,color,border-color,transform] duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98] select-none';
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-navy-800 text-paper-50 hover:bg-brand-600 hover:text-white',
-  secondary: 'bg-brand-600 text-white hover:bg-brand-700',
-  outline: 'border border-navy-800/40 text-navy-800 hover:border-navy-800 hover:bg-navy-800 hover:text-paper-50',
+  primary: 'bg-navy-800 text-paper-50 hover:bg-navy-600',
+  secondary: 'bg-brand-600 text-on-brand hover:bg-brand-700',
+  outline: 'border border-navy-800/30 text-navy-800 hover:border-navy-800 hover:bg-navy-800 hover:text-paper-50',
   ghost: 'text-navy-800 hover:bg-navy-50',
   whatsapp: 'bg-[#1f7a4d] text-white hover:bg-[#186440]',
 };
 
 const sizes: Record<Size, string> = {
-  sm: 'h-9 px-4 text-[10px]',
-  md: 'h-11 px-6 text-[11px]',
-  lg: 'h-13 px-8 text-[11px]',
+  sm: 'h-10 px-4 text-[11px]',
+  md: 'h-12 px-6 text-xs',
+  lg: 'h-14 px-8 text-xs',
 };
 
 export function buttonClasses(variant: Variant = 'primary', size: Size = 'md', extra = ''): string {

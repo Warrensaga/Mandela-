@@ -82,7 +82,7 @@ export default function CustomRequestPage() {
     return (
       <div className="container-page max-w-xl py-20 text-center">
         <Seo title="Request received" noindex />
-        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-600 text-white">
+        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-600 text-on-brand">
           <Icon name="check" className="h-7 w-7" />
         </span>
         <h1 className="mt-5 text-4xl">Request received</h1>
@@ -158,13 +158,13 @@ export default function CustomRequestPage() {
         </Field>
         {preview && (
           <div className="flex items-center gap-3 sm:col-span-2">
-            <img src={preview} alt="Your reference" className="h-20 w-20 rounded-lg object-cover" />
+            <img src={preview} alt="Your reference" className="h-20 w-20 object-cover" />
             <button type="button" className="text-sm text-navy-800 underline underline-offset-4" onClick={() => setFile(null)}>
               Remove photo
             </button>
           </div>
         )}
-        {errors.form && <p className="rounded-lg bg-terracotta-500/10 p-3 text-sm text-terracotta-600 sm:col-span-2" role="alert">{errors.form}</p>}
+        {errors.form && <p className="bg-terracotta-500/10 p-3 text-sm text-terracotta-600 sm:col-span-2" role="alert">{errors.form}</p>}
         <div className="sm:col-span-2">
           <Button type="submit" size="lg" disabled={submitting} className="w-full sm:w-auto">
             {submitting ? 'Sending…' : 'Send request'}

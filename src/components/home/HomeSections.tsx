@@ -1,37 +1,38 @@
+import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import type { CategoryNode, ProductSummary } from '../../lib/api';
+import { isAvailable } from '../../lib/catalog/filters';
 import { formatKES } from '../../lib/format';
 import { whatsappLink } from '../../lib/whatsapp';
 import { useSite } from '../../state/site';
+import { SocialLinks } from '../layout/SocialLinks';
+import { percentOff, ProductCard } from '../product/ProductCard';
+import { ProductGrid } from '../product/ProductGrid';
 import { ButtonAnchor, ButtonLink } from '../ui/Button';
 import { Icon, WhatsAppIcon, type IconName } from '../ui/Icon';
 import { Img } from '../ui/Img';
-import { Price } from '../ui/Price';
-import { isAvailable } from '../../lib/catalog/filters';
-import { percentOff } from '../product/ProductCard';
 import { Reveal } from '../ui/Reveal';
-import { Skeleton } from '../ui/Skeleton';
+import { GridSkeleton, Skeleton } from '../ui/Skeleton';
 
 // Factual statements about how the business works. No ratings, counts or reviews.
 const BENEFITS: { icon: IconName; title: string; body: string }[] = [
-  { icon: 'ruler', title: 'Custom sizing', body: 'Built to your exact space' },
+  { icon: 'ruler', title: 'Custom sizing', body: 'Built to fit your space' },
   { icon: 'truck', title: 'Nairobi next-day', body: 'For in-stock pieces' },
-  { icon: 'hammer', title: 'Workshop made', body: 'Hardwood frames, built to last' },
-  { icon: 'shield', title: 'Pay on confirmation', body: 'Confirmed on WhatsApp first' },
+  { icon: 'hammer', title: 'Made in our workshop', body: 'Hardwood frames' },
+  { icon: 'shield', title: 'Pay after we confirm', body: 'Order confirmed on WhatsApp' },
 ];
 
+/** Service facts under the hero. */
 export function BenefitStrip() {
   return (
-    <div className="border-y border-white/10 bg-[#0a1530] text-white">
-      <ul className="container-page grid grid-cols-1 divide-white/10 min-[400px]:grid-cols-2 lg:grid-cols-4 lg:divide-x">
+    <div className="border-b border-paper-200 bg-paper-50">
+      <ul className="container-page grid grid-cols-2 gap-y-4 py-5 lg:grid-cols-4 lg:py-6">
         {BENEFITS.map((b) => (
-          <li key={b.title} className="flex min-w-0 items-center gap-3 px-2 py-4 min-[400px]:py-5 lg:px-6">
-            <span className="grid h-10 w-10 shrink-0 place-items-center border border-white/15 text-gold-400">
-              <Icon name={b.icon} className="h-5 w-5" />
-            </span>
-            <span>
-              <span className="label-mono block text-white">{b.title}</span>
-              <span className="block text-xs text-white/60">{b.body}</span>
+          <li key={b.title} className="flex min-w-0 items-start gap-3 pr-2">
+            <Icon name={b.icon} className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
+            <span className="min-w-0">
+              <span className="block text-sm font-semibold text-navy-800">{b.title}</span>
+              <span className="block text-[13px] text-muted">{b.body}</span>
             </span>
           </li>
         ))}
@@ -40,282 +41,374 @@ export function BenefitStrip() {
   );
 }
 
-function SectionHeading({ eyebrow, title, action }: { eyebrow: string; title: string; action?: React.ReactNode }) {
+/** Section title row: heading (plus an optional line of context) and a "view all" link. */
+export function SectionHeading({
+  id,
+  title,
+  intro,
+  link,
+}: {
+  id: string;
+  title: ReactNode;
+  intro?: ReactNode;
+  link?: { to: string; label: string };
+}) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-4">
-      <div>
-        <p className="eyebrow eyebrow-line">{eyebrow}</p>
-        <h2 className="mt-3 text-4xl sm:text-5xl">{title}</h2>
+    <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-3 border-b border-paper-200 pb-5">
+      <div className="max-w-2xl">
+        <h2 id={id} className="text-3xl sm:text-4xl">
+          {title}
+        </h2>
+        {intro && <p className="mt-2 text-[15px] text-muted">{intro}</p>}
       </div>
-      {action}
+      {link && (
+        <Link
+          to={link.to}
+          className="py-2 text-sm font-semibold text-navy-800 underline decoration-paper-300 underline-offset-[6px] transition-colors hover:text-brand-600 hover:decoration-brand-600"
+        >
+          {link.label}
+        </Link>
+      )}
     </div>
   );
 }
 
-/** Dark "Shop by Category" grid: photo tiles, name bottom-left, arrow top-right. */
+/** Collections: the first category as a tall tile, the rest beside it. */
 export function ShopByCategory() {
   const { categories, ready } = useSite();
   return (
-    <section aria-labelledby="cat-heading" className="theme-dark py-20 sm:py-24">
+    <section aria-labelledby="cat-heading" className="section-y bg-paper-50">
       <div className="container-page">
-        <div id="cat-heading">
-          <SectionHeading
-            eyebrow="Browse"
-            title="Shop by Category"
-            action={
-              <Link to="/categories" className="label-mono tap hidden text-navy-600 hover:text-gold-400 sm:inline-block">
-                All categories ↗
-              </Link>
-            }
-          />
-        </div>
-        <ul className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
-          {!ready && Array.from({ length: 6 }, (_, i) => <li key={i}><Skeleton className="aspect-[4/3] w-full rounded-none" /></li>)}
+        <SectionHeading id="cat-heading" title="Shop by category" link={{ to: '/categories', label: 'All categories' }} />
+        <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-flow-dense lg:grid-cols-3">
+          {!ready &&
+            Array.from({ length: 7 }, (_, i) => (
+              <li key={i} className={i === 0 ? 'col-span-2 lg:col-span-1 lg:row-span-3' : ''}>
+                <Skeleton className="aspect-[4/3] h-full w-full rounded-none" />
+              </li>
+            ))}
           {categories.map((cat, i) => (
-            <Reveal as="li" key={cat.id} delay={(i % 3) * 0.06}>
-              <CategoryTile cat={cat} />
+            <Reveal as="li" key={cat.id} delay={(i % 3) * 0.05} className={i === 0 ? 'col-span-2 lg:col-span-1 lg:row-span-3' : ''}>
+              <CategoryTile cat={cat} fill={i === 0} />
             </Reveal>
           ))}
         </ul>
-        <div className="mt-10 flex justify-center sm:justify-end">
-          <ButtonLink to="/categories" variant="outline" size="lg">
-            Browse all categories <span aria-hidden="true">↗</span>
-          </ButtonLink>
-        </div>
       </div>
     </section>
   );
 }
 
-export function CategoryTile({ cat, tall = false }: { cat: CategoryNode; tall?: boolean }) {
+export function CategoryTile({
+  cat,
+  tall = false,
+  fill = false,
+}: {
+  cat: CategoryNode;
+  tall?: boolean;
+  /** Stretch to the grid cell's height on desktop (the large lead tile). */
+  fill?: boolean;
+}) {
+  const aspect = tall ? 'aspect-[3/4]' : fill ? 'aspect-[4/3] lg:aspect-auto lg:h-full' : 'aspect-[4/3]';
   return (
-    <Link to={`/category/${cat.slug}`} className="group relative block overflow-hidden bg-paper-200">
+    <Link to={`/category/${cat.slug}`} className={`group relative block overflow-hidden bg-paper-200 ${fill ? 'h-full' : ''}`}>
       <Img
         src={cat.imageUrl}
         alt=""
-        sizes="(min-width: 1024px) 33vw, 50vw"
-        className={`${tall ? 'aspect-[3/4]' : 'aspect-[4/3]'} w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105`}
+        sizes={fill ? '(min-width: 1024px) 33vw, 100vw' : '(min-width: 1024px) 33vw, 50vw'}
+        className={`${aspect} w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]`}
       />
-      <span className="absolute inset-0 bg-gradient-to-t from-[#0a1530]/85 via-[#0a1530]/10 to-transparent" />
-      <span className="absolute top-3 right-3 grid h-9 w-9 place-items-center bg-[#0a1530]/50 text-white backdrop-blur-sm transition-colors group-hover:bg-gold-500 group-hover:text-[#0a1530]">
-        ↗
-      </span>
+      <span className="absolute inset-0 bg-gradient-to-t from-[#0a1530]/75 via-transparent to-transparent" />
       <span className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
-        <span className="block text-base font-medium text-white sm:text-lg">{cat.name}</span>
+        <span className={`block leading-tight font-semibold text-white ${fill ? 'text-xl sm:text-2xl' : 'text-[15px] sm:text-lg'}`}>
+          {cat.name}
+        </span>
         {cat.children.length > 0 && (
-          <span className="mt-0.5 hidden text-xs text-white/70 sm:block">{cat.children.slice(0, 3).map((c) => c.name).join(' · ')}</span>
+          <span className="mt-1 hidden text-[13px] text-white/80 sm:block">
+            {cat.children.slice(0, 3).map((c) => c.name).join(', ')}
+          </span>
         )}
       </span>
     </Link>
   );
 }
 
-const FEATURES: { slug: string; prefer: string; eyebrow: string; title: string; body: string; cta: string; badge: string }[] = [
+/** A title row plus a product grid (best sellers, featured, new arrivals). */
+export function ProductShelf({
+  id,
+  title,
+  intro,
+  link,
+  products,
+  loading,
+  tone = 'white',
+}: {
+  id: string;
+  title: ReactNode;
+  intro?: ReactNode;
+  link?: { to: string; label: string };
+  products: ProductSummary[];
+  loading: boolean;
+  tone?: 'white' | 'grey';
+}) {
+  if (!loading && !products.length) return null;
+  return (
+    <section aria-labelledby={id} className={`section-y ${tone === 'grey' ? 'bg-paper-100' : 'bg-paper-50'}`}>
+      <div className="container-page">
+        <SectionHeading id={id} title={title} intro={intro} link={link} />
+        <div className="mt-8">{loading ? <GridSkeleton count={4} /> : <ProductGrid products={products} />}</div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Pieces with an admin-entered compare-at price, on a navy band.
+ * Hidden when nothing is on offer. No countdowns or invented urgency.
+ */
+export function OffersFeature({ products }: { products: ProductSummary[] }) {
+  const deals = products
+    .filter((p) => isAvailable(p) && percentOff(p.compareAtPrice, p.minPrice))
+    .sort((a, b) => (percentOff(b.compareAtPrice, b.minPrice) ?? 0) - (percentOff(a.compareAtPrice, a.minPrice) ?? 0))
+    .slice(0, 4);
+  if (!deals.length) return null;
+  return (
+    <section aria-labelledby="offers-heading" className="theme-dark section-y">
+      <div className="container-page">
+        <SectionHeading
+          id="offers-heading"
+          title="On offer now"
+          intro="Reduced prices on selected pieces, with the original price shown."
+          link={{ to: '/shop?offers=1', label: 'All offers' }}
+        />
+        <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-4">
+          {deals.map((p, i) => (
+            <Reveal as="li" key={p.id} delay={i * 0.05}>
+              <ProductCard product={p} />
+            </Reveal>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+const ROOMS: { slug: string; prefer: string; name: string; body: string }[] = [
   {
     slug: 'living-room',
     prefer: 'sofas',
-    eyebrow: 'Living room',
-    title: 'The perfect sofa awaits',
-    body: 'From compact 2-seaters to generous L-shapes, in chenille, velvet or leather. Every frame is kiln-dried hardwood, built for family life.',
-    cta: 'View sofas and living',
-    badge: 'Made to your size',
+    name: 'Living room',
+    body: '2-seaters to L-shapes in chenille, velvet or leather, plus coffee tables and TV stands.',
   },
   {
     slug: 'dining',
     prefer: 'dining-sets',
-    eyebrow: 'Dining',
-    title: 'Gather around something beautiful',
-    body: 'Dining sets for four to eight in oak, walnut and ebony finishes, plus chairs and sideboards to complete the room.',
-    cta: 'Explore dining',
-    badge: 'Seats 4 to 8',
+    name: 'Dining',
+    body: 'Sets for four to eight in oak, walnut and ebony finishes, with chairs and sideboards.',
   },
   {
     slug: 'bedroom',
     prefer: 'beds-and-bed-frames',
-    eyebrow: 'Bedroom',
-    title: 'Sleep in quiet comfort',
-    body: 'Beds, wardrobes and bedside tables crafted for rest. Standard and custom sizes, with orthopaedic mattresses to match.',
-    cta: 'Discover bedroom',
-    badge: 'All bed sizes',
+    name: 'Bedroom',
+    body: 'Beds in standard and custom sizes, wardrobes, bedside tables and mattresses.',
   },
 ];
 
-/** Three alternating image-and-text sections, each linking to a collection. */
-export function FeatureSplits({ products }: { products: ProductSummary[] }) {
+/**
+ * Three rooms with a product photo each (so this does not repeat the category
+ * tiles above), then links to every room the catalogue covers.
+ */
+export function InteriorInspiration({ products }: { products: ProductSummary[] }) {
   const { categories } = useSite();
-  return (
-    <>
-      {FEATURES.map((f, i) => {
-        const cat = categories.find((c) => c.slug === f.slug);
-        if (!cat) return null;
-        const ids = new Set([cat.id, ...cat.children.map((c) => c.id)]);
-        const inCat = products.filter((p) => ids.has(p.categoryId));
-        const preferredId = cat.children.find((c) => c.slug === f.prefer)?.id;
-        const image =
-          inCat.find((p) => p.categoryId === preferredId && p.imageUrl)?.imageUrl ??
-          inCat.find((p) => p.isFeatured && p.imageUrl)?.imageUrl ??
-          cat.imageUrl;
-        const from = inCat.length ? Math.min(...inCat.map((p) => p.minPrice)) : null;
-        return (
-          <section key={f.slug} className="border-t border-paper-200 bg-paper-50" aria-labelledby={`feature-${f.slug}`}>
-            <div className={`container-page grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-2 lg:gap-16 ${i % 2 ? 'lg:[&>*:first-child]:order-2' : ''}`}>
-              <Reveal className="relative overflow-hidden bg-paper-200">
-                <Img src={image} alt={cat.name} sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-[4/3] w-full object-cover" />
-                <span className="label-mono absolute top-4 left-4 bg-paper-50 px-3 py-2 text-navy-800">{f.badge}</span>
-              </Reveal>
-              <Reveal delay={0.08}>
-                <p className="eyebrow eyebrow-line">{f.eyebrow}</p>
-                <h2 id={`feature-${f.slug}`} className="mt-4 text-4xl leading-tight sm:text-5xl">{f.title}</h2>
-                <p className="mt-5 max-w-md leading-relaxed text-muted">{f.body}</p>
-                {from !== null && <p className="label-mono mt-5 text-brand-600">From {formatKES(from)}</p>}
-                <ButtonLink to={`/category/${cat.slug}`} size="lg" className="mt-7">
-                  {f.cta} <span aria-hidden="true">↗</span>
-                </ButtonLink>
-              </Reveal>
-            </div>
-          </section>
-        );
-      })}
-    </>
-  );
-}
+  const rooms = ROOMS.flatMap((r) => {
+    const cat = categories.find((c) => c.slug === r.slug);
+    if (!cat) return [];
+    const ids = new Set([cat.id, ...cat.children.map((c) => c.id)]);
+    const inCat = products.filter((p) => ids.has(p.categoryId));
+    const preferredId = cat.children.find((c) => c.slug === r.prefer)?.id;
+    const image =
+      inCat.find((p) => p.categoryId === preferredId && p.isFeatured && p.imageUrl)?.imageUrl ??
+      inCat.find((p) => p.categoryId === preferredId && p.imageUrl)?.imageUrl ??
+      inCat.find((p) => p.imageUrl)?.imageUrl ??
+      cat.imageUrl;
+    const from = inCat.length ? Math.min(...inCat.map((p) => p.minPrice)) : null;
+    return [{ ...r, cat, image, from }];
+  });
+  const roomFilters = [...new Set(products.map((p) => p.room).filter((r): r is string => Boolean(r)))].sort();
+  if (!rooms.length) return null;
 
-/** Bento grid of rooms (large tile + smaller tiles), linking to the room filter. */
-export function ShopByRoom({ products }: { products: ProductSummary[] }) {
-  const { categories } = useSite();
-  const rooms = [...new Set(products.map((p) => p.room).filter((r): r is string => Boolean(r)))];
-  const tiles = rooms
-    .map((room) => {
-      const inRoom = products.filter((p) => p.room === room);
-      // Prefer the matching collection photo (e.g. "Bedroom" → bedroom), else a featured piece.
-      const key = room.toLowerCase().replace(/[^a-z]+/g, '-');
-      const cat = categories.find((c) => c.slug === key || c.slug.startsWith(`${key}-`));
-      const image = cat?.imageUrl ?? (inRoom.find((p) => p.isFeatured && p.imageUrl) ?? inRoom.find((p) => p.imageUrl))?.imageUrl ?? null;
-      return { room, image, count: inRoom.length };
-    })
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
-  if (!tiles.length) return null;
   return (
-    <section aria-labelledby="room-heading" className="bg-paper-100 py-20 sm:py-24">
+    <section aria-labelledby="rooms-heading" className="section-y bg-paper-100">
       <div className="container-page">
-        <div id="room-heading">
-          <SectionHeading eyebrow="Explore" title="Shop by Room" />
-        </div>
-        <ul className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:grid-rows-2">
-          {tiles.map((t, i) => (
-            <Reveal as="li" key={t.room} delay={i * 0.05} className={i === 0 ? 'col-span-2 lg:row-span-2' : ''}>
-              <Link to={`/shop?room=${encodeURIComponent(t.room)}`} className="group relative block h-full overflow-hidden bg-paper-200">
-                <Img
-                  src={t.image}
-                  alt=""
-                  sizes={i === 0 ? '(min-width: 1024px) 50vw, 100vw' : '(min-width: 1024px) 25vw, 50vw'}
-                  className={`h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 ${i === 0 ? 'aspect-[4/3] lg:aspect-auto' : 'aspect-square'}`}
-                />
-                <span className="absolute inset-0 bg-gradient-to-t from-[#0a1530]/80 to-transparent" />
-                <span className="absolute inset-x-0 bottom-0 flex items-end justify-between p-4 sm:p-5">
-                  <span className={`font-serif text-white ${i === 0 ? 'text-3xl sm:text-4xl' : 'text-xl sm:text-2xl'}`}>{t.room}</span>
-                  <span className="label-mono text-white/80">{t.count} pieces ↗</span>
+        <SectionHeading id="rooms-heading" title="Furnish a room" intro="Where to start for the rooms customers ask us about most." />
+        <ul className="mt-8 grid gap-8 md:grid-cols-3 md:gap-6">
+          {rooms.map((r, i) => (
+            <Reveal as="li" key={r.slug} delay={i * 0.06}>
+              <Link to={`/category/${r.cat.slug}`} className="group block h-full bg-paper-50">
+                <span className="block overflow-hidden bg-paper-200">
+                  <Img
+                    src={r.image}
+                    alt={`${r.name} furniture`}
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    className="aspect-[4/3] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  />
+                </span>
+                <span className="block p-5 sm:p-6">
+                  <span className="flex items-baseline justify-between gap-3">
+                    <span className="font-serif text-2xl text-navy-800 group-hover:text-brand-600">{r.name}</span>
+                    {r.from !== null && <span className="shrink-0 text-sm text-muted">from {formatKES(r.from)}</span>}
+                  </span>
+                  <span className="mt-2 block text-[15px] leading-relaxed text-muted">{r.body}</span>
                 </span>
               </Link>
             </Reveal>
           ))}
         </ul>
+        {roomFilters.length > 0 && (
+          <nav aria-label="Shop by room" className="mt-8 flex flex-wrap items-center gap-2">
+            <span className="mr-2 text-sm text-muted">Shop by room:</span>
+            {roomFilters.map((room) => (
+              <Link
+                key={room}
+                to={`/shop?room=${encodeURIComponent(room)}`}
+                className="inline-flex h-10 items-center border border-paper-300 bg-paper-50 px-4 text-sm text-navy-800 transition-colors hover:border-brand-600 hover:text-brand-600"
+              >
+                {room}
+              </Link>
+            ))}
+          </nav>
+        )}
       </div>
     </section>
   );
 }
 
-// Promises the business keeps, shown where the reference layout has reviews.
-// Real customer reviews can replace these once the owner collects them.
-const PROMISES: { title: string; body: string }[] = [
-  { title: 'Confirmed in writing', body: 'Every order is confirmed on WhatsApp with items, total and delivery date before you pay anything.' },
-  { title: 'Made to measure', body: 'Need a different size, fabric or finish? Our workshop quotes and builds it, with a deposit to start.' },
-  { title: 'Delivered with care', body: 'Next-day delivery in Nairobi for in-stock pieces, and courier delivery or branch pick-up across Kenya.' },
+// How ordering works here. Facts about the process, not reviews.
+const STEPS: { title: string; body: string }[] = [
+  { title: 'You order online', body: 'Pick your pieces and delivery area. Nothing is charged when you place the order.' },
+  { title: 'We confirm on WhatsApp', body: 'You get the items, total and delivery date in writing before you pay anything.' },
+  { title: 'You pay, we deliver', body: 'Pay by M-Pesa or bank transfer. Next-day in Nairobi for in-stock pieces; courier or branch pick-up upcountry.' },
 ];
 
 export function PromiseSection() {
   return (
-    <section aria-labelledby="promise-heading" className="theme-dark py-20 sm:py-24">
-      <div className="container-page">
-        <div id="promise-heading">
-          <SectionHeading eyebrow="Our promise" title="How we work with you" />
+    <section aria-labelledby="steps-heading" className="section-y bg-paper-50">
+      <div className="container-page grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
+        <div>
+          <h2 id="steps-heading" className="text-3xl sm:text-4xl">
+            How ordering works
+          </h2>
+          <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-muted">
+            No online payment and no surprises. Questions first?{' '}
+            <Link to="/faq" className="text-navy-800 underline underline-offset-4 hover:text-brand-600">
+              Read the FAQs
+            </Link>
+            .
+          </p>
         </div>
-        <ul className="mt-10 grid gap-4 md:grid-cols-3">
-          {PROMISES.map((p, i) => (
-            <Reveal as="li" key={p.title} delay={i * 0.06} className="border border-paper-200 bg-paper-100 p-6 sm:p-8">
-              <span className="font-label text-xs font-bold text-gold-ink">{String(i + 1).padStart(2, '0')}</span>
-              <h3 className="mt-4 text-2xl">{p.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted">{p.body}</p>
+        <ol className="grid gap-6 sm:grid-cols-3">
+          {STEPS.map((s, i) => (
+            <Reveal as="li" key={s.title} delay={i * 0.05} className="border-t-2 border-navy-800 pt-4">
+              <span className="text-sm font-semibold text-brand-600">Step {i + 1}</span>
+              <h3 className="mt-1 font-sans text-lg font-semibold">{s.title}</h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-muted">{s.body}</p>
             </Reveal>
           ))}
-        </ul>
+        </ol>
       </div>
     </section>
   );
 }
 
+/** Delivery fees by area. Shown where reviews go until the owner publishes one. */
 export function DeliveryAndPayment() {
   const { zones, settings } = useSite();
   if (!zones.length) return null;
   return (
-    <section aria-labelledby="delivery-heading" className="bg-paper-50 py-20 sm:py-24">
-      <div className="container-page grid gap-6 lg:grid-cols-2">
-        <Reveal className="border border-paper-200 p-6 sm:p-8">
-          <p className="eyebrow eyebrow-line">Delivery</p>
-          <h2 id="delivery-heading" className="mt-3 text-3xl sm:text-4xl">Where we deliver</h2>
-          <ul className="mt-6 divide-y divide-paper-200">
-            {zones.map((z) => (
-              <li key={z.id} className="flex items-start justify-between gap-4 py-3">
-                <div>
-                  <p className="font-medium text-navy-800">{z.name}</p>
-                  <p className="text-sm text-muted">
-                    {z.daysMin === z.daysMax ? `${z.daysMin} day${z.daysMin === 1 ? '' : 's'}` : `${z.daysMin} to ${z.daysMax} days`}
-                    {z.freeThreshold !== null && ` · free over ${formatKES(z.freeThreshold)}`}
-                  </p>
-                </div>
-                <p className="label-mono shrink-0 text-navy-800">{z.fee === 0 ? 'Free' : formatKES(z.fee)}</p>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
-        <Reveal delay={0.08} className="flex flex-col justify-between bg-brand-600 p-6 text-white sm:p-8">
-          <div>
-            <p className="label-mono text-gold-300">Paying</p>
-            <h2 className="mt-3 text-3xl !text-white sm:text-4xl">Order now, pay when we confirm</h2>
-            <ol className="mt-6 space-y-3 text-sm text-white/85">
-              <li><span className="font-label font-bold text-gold-300">01</span> Place your order online. Nothing is charged.</li>
-              <li><span className="font-label font-bold text-gold-300">02</span> We confirm items, total and delivery date on WhatsApp.</li>
-              <li><span className="font-label font-bold text-gold-300">03</span> Pay by M-Pesa or bank transfer using your order number.</li>
-            </ol>
-          </div>
-          <p className="mt-8 border-t border-white/20 pt-4 text-sm text-white/85">
-            Custom and made-to-order pieces start with a {settings.depositPercent}% deposit.
+    <section aria-labelledby="delivery-heading" className="section-y bg-paper-100">
+      <div className="container-page grid gap-8 lg:grid-cols-[1fr_2fr] lg:gap-16">
+        <div>
+          <h2 id="delivery-heading" className="text-3xl sm:text-4xl">
+            Delivery fees
+          </h2>
+          <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-muted">
+            You choose your area at checkout and the fee is added to your total. Custom and made-to-order pieces start with a{' '}
+            {settings.depositPercent}% deposit.
           </p>
+          <Link to="/delivery" className="mt-4 inline-block py-2 text-sm font-semibold text-navy-800 underline underline-offset-[6px] hover:text-brand-600">
+            Delivery and installation details
+          </Link>
+        </div>
+        <Reveal>
+          <table className="w-full border-collapse bg-paper-50 text-left text-[15px]">
+            <thead>
+              <tr className="border-b border-paper-200 text-sm text-muted">
+                <th scope="col" className="px-4 py-3 font-medium sm:px-5">Area</th>
+                <th scope="col" className="px-4 py-3 font-medium sm:px-5">Time</th>
+                <th scope="col" className="px-4 py-3 text-right font-medium sm:px-5">Fee</th>
+              </tr>
+            </thead>
+            <tbody>
+              {zones.map((z) => (
+                <tr key={z.id} className="border-b border-paper-200 last:border-0">
+                  <th scope="row" className="px-4 py-3.5 font-medium text-navy-800 sm:px-5">
+                    {z.name}
+                    {z.freeThreshold !== null && <span className="block text-[13px] font-normal text-muted">Free over {formatKES(z.freeThreshold)}</span>}
+                  </th>
+                  <td className="px-4 py-3.5 text-muted sm:px-5">
+                    {z.daysMin === z.daysMax ? `${z.daysMin} day${z.daysMin === 1 ? '' : 's'}` : `${z.daysMin} to ${z.daysMax} days`}
+                  </td>
+                  <td className="px-4 py-3.5 text-right font-semibold text-navy-800 sm:px-5">{z.fee === 0 ? 'Free' : formatKES(z.fee)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </Reveal>
       </div>
     </section>
   );
 }
 
-/** Closing call to action, as on the reference layout. */
+/**
+ * Social follow strip, in place of a newsletter (owner's choice). Nothing is
+ * collected. Hidden when no social links are set.
+ */
+export function StayInTouch() {
+  const { settings } = useSite();
+  if (!settings.social.instagram && !settings.social.tiktok) return null;
+  return (
+    <section aria-labelledby="follow-heading" className="border-t border-paper-200 bg-paper-50 py-10 sm:py-12">
+      <div className="container-page flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 id="follow-heading" className="font-sans text-lg font-semibold">
+            Follow {settings.storeName}
+          </h2>
+          <p className="mt-1 text-[15px] text-muted">New pieces and photos from the workshop, on Instagram and TikTok.</p>
+        </div>
+        <SocialLinks />
+      </div>
+    </section>
+  );
+}
+
+/** Closing call to action for custom and made-to-order pieces. */
 export function CustomCta() {
   const { settings, categories } = useSite();
   const bg = categories.find((c) => c.slug === 'living-room')?.imageUrl ?? null;
   return (
-    <section className="relative isolate overflow-hidden bg-[#0a1530] text-white">
+    <section aria-labelledby="custom-heading" className="relative isolate overflow-hidden bg-[#0a1530] text-white">
       {bg && <Img src={bg} alt="" sizes="100vw" className="absolute inset-0 -z-20 h-full w-full object-cover" />}
-      <span className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0a1530] via-[#0a1530]/90 to-[#0a1530]/70" aria-hidden="true" />
-      <span className="absolute top-0 left-0 h-1 w-28 bg-gold-500" aria-hidden="true" />
-      <div className="container-page py-20 sm:py-24">
-        <p className="eyebrow eyebrow-line !text-gold-400">Custom orders</p>
-        <h2 className="mt-4 max-w-2xl text-4xl !text-white sm:text-5xl">Can't find what you're looking for?</h2>
-        <p className="mt-5 max-w-xl text-white/80">
-          We build furniture to your exact size, material, colour and style. Share your idea and a photo if you have one, and we will quote on WhatsApp.
+      <span className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0a1530] via-[#0a1530]/90 to-[#0a1530]/60" aria-hidden="true" />
+      <div className="container-page py-16 sm:py-24">
+        <h2 id="custom-heading" className="max-w-xl text-3xl !text-white sm:text-5xl">
+          Need a different size or fabric?
+        </h2>
+        <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85">
+          We make sofas, beds, wardrobes and tables to order. Send the measurements, and a photo if you have one, and we'll reply with a
+          quote. Custom pieces start with a {settings.depositPercent}% deposit.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <ButtonLink to="/custom-request" size="lg" className="!bg-white !text-[#0a1530] hover:!bg-gold-500">
-            Request a custom piece <span aria-hidden="true">↗</span>
+          <ButtonLink to="/custom-request" size="lg" className="!bg-white !text-[#0a1530] hover:!bg-gold-400">
+            Request a custom piece
           </ButtonLink>
           {settings.whatsappNumber && (
             <ButtonAnchor
@@ -325,63 +418,10 @@ export function CustomCta() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <WhatsAppIcon className="h-4 w-4" /> Chat on WhatsApp
+              <WhatsAppIcon className="h-4 w-4" /> Ask on WhatsApp
             </ButtonAnchor>
           )}
         </div>
-      </div>
-    </section>
-  );
-}
-
-/**
- * Deals strip: compact cards for pieces with an admin-entered compare-at price.
- * Hidden when nothing is on offer. No countdowns or invented urgency.
- */
-export function DealsStrip({ products }: { products: ProductSummary[] }) {
-  const { categoryById } = useSite();
-  const deals = products
-    .filter((p) => isAvailable(p) && percentOff(p.compareAtPrice, p.minPrice))
-    .sort((a, b) => (percentOff(b.compareAtPrice, b.minPrice) ?? 0) - (percentOff(a.compareAtPrice, a.minPrice) ?? 0))
-    .slice(0, 4);
-  if (!deals.length) return null;
-  return (
-    <section aria-labelledby="deals-heading" className="bg-paper-100 py-14 sm:py-16">
-      <div className="container-page">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="eyebrow eyebrow-line">Deals</p>
-            <h2 id="deals-heading" className="mt-3 text-3xl sm:text-4xl">On offer now</h2>
-          </div>
-          <Link to="/shop?offers=1" className="label-mono tap text-terracotta-600 hover:text-terracotta-500">
-            View all offers ↗
-          </Link>
-        </div>
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {deals.map((p, i) => {
-            const pct = percentOff(p.compareAtPrice, p.minPrice);
-            const category = categoryById(p.categoryId);
-            return (
-              <Reveal as="li" key={p.id} delay={i * 0.05}>
-                <article className="group relative flex h-full gap-4 border border-paper-200 bg-paper-50 p-3 transition-shadow hover:shadow-lift">
-                  <span className="relative block w-24 shrink-0 overflow-hidden bg-paper-200 sm:w-28">
-                    <Img src={p.imageUrl} alt="" sizes="112px" className="aspect-square h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                    {pct && (
-                      <span className="absolute top-1.5 left-1.5 bg-[#b9351f] px-1.5 py-0.5 font-label text-[10px] font-bold text-white">-{pct}%</span>
-                    )}
-                  </span>
-                  <span className="flex min-w-0 flex-col justify-center gap-1">
-                    {category && <span className="font-label text-[9px] font-bold tracking-[0.18em] text-muted uppercase">{category.name}</span>}
-                    <Link to={`/product/${p.slug}`} className="line-clamp-2 text-[15px] leading-snug font-medium text-navy-800 after:absolute after:inset-0 group-hover:text-brand-600">
-                      {p.name}
-                    </Link>
-                    <Price amount={p.minPrice} compareAt={p.compareAtPrice} from={p.hasVariants && p.minPrice !== p.maxPrice} size="sm" />
-                  </span>
-                </article>
-              </Reveal>
-            );
-          })}
-        </ul>
       </div>
     </section>
   );

@@ -91,8 +91,6 @@ export default function ContactPage() {
         ]}
       />
       <PageBand
-        tone="light"
-        eyebrow="Get in touch"
         title="Contact us"
         crumbs={[{ to: '/', label: 'Home' }, { label: 'Contact' }]}
       />

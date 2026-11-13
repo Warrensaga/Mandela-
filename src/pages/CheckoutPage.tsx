@@ -241,7 +241,7 @@ export default function CheckoutPage() {
                   return (
                     <label
                       key={z.id}
-                      className={`flex cursor-pointer flex-col rounded-xl border p-4 transition-colors ${form.zoneId === z.id ? 'border-navy-800 bg-navy-50' : 'border-paper-300 bg-paper-50 hover:border-navy-400'}`}
+                      className={`flex cursor-pointer flex-col border p-4 transition-colors ${form.zoneId === z.id ? 'border-navy-800 bg-navy-50' : 'border-paper-300 bg-paper-50 hover:border-navy-400'}`}
                     >
                       <span className="flex items-start justify-between gap-3">
                         <span className="flex items-center gap-2">
@@ -289,13 +289,13 @@ export default function CheckoutPage() {
                 <dd className="font-semibold text-navy-800">{formatKES(totals.total)}</dd>
               </div>
               {totals.deposit > 0 && (
-                <div className="rounded-lg bg-paper-100 p-3 text-xs text-navy-800">
+                <div className="bg-paper-100 p-3 text-xs text-navy-800">
                   Deposit to start made-to-order pieces: <strong>{formatKES(totals.deposit)}</strong> ({settings.depositPercent}%). Balance {formatKES(totals.balance)} before delivery.
                 </div>
               )}
             </dl>
             {errors.form && (
-              <p className="mt-4 rounded-lg bg-terracotta-500/10 p-3 text-sm text-terracotta-600" role="alert">
+              <p className="mt-4 bg-terracotta-500/10 p-3 text-sm text-terracotta-600" role="alert">
                 {errors.form}
               </p>
             )}

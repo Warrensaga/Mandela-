@@ -36,7 +36,7 @@ export default function OrderConfirmationPage() {
     <div className="container-page max-w-4xl py-10 sm:py-14">
       <Seo title={`Order ${order.orderNumber} received`} noindex />
       <div className="text-center">
-        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-600 text-white">
+        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-600 text-on-brand">
           <Icon name="check" className="h-7 w-7" />
         </span>
         <p className="eyebrow mt-5">Order received</p>

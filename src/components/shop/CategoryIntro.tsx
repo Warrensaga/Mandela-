@@ -44,11 +44,11 @@ export function CategoryIntro({
         </p>
         <p>
           We deliver across Kenya{areas ? ` (${areas})` : ''}. See{' '}
-          <Link to="/delivery" className="text-navy-800 underline underline-offset-4 hover:text-gold-500">
+          <Link to="/delivery" className="text-navy-800 underline underline-offset-4 hover:text-brand-600">
             delivery fees and times
           </Link>
           . Need a different size, fabric or finish? Ask for{' '}
-          <Link to="/custom-request" className="text-navy-800 underline underline-offset-4 hover:text-gold-500">
+          <Link to="/custom-request" className="text-navy-800 underline underline-offset-4 hover:text-brand-600">
             custom-made {name}
           </Link>{' '}
           from our Nairobi workshop.
@@ -60,13 +60,13 @@ export function CategoryIntro({
               subcategories.map((c, i) => (
                 <span key={c.id}>
                   {i > 0 && ', '}
-                  <Link to={`/category/${c.slug}`} className="text-navy-800 underline underline-offset-4 hover:text-gold-500">
+                  <Link to={`/category/${c.slug}`} className="text-navy-800 underline underline-offset-4 hover:text-brand-600">
                     {c.name}
                   </Link>
                 </span>
               ))
             ) : parent ? (
-              <Link to={`/category/${parent.slug}`} className="text-navy-800 underline underline-offset-4 hover:text-gold-500">
+              <Link to={`/category/${parent.slug}`} className="text-navy-800 underline underline-offset-4 hover:text-brand-600">
                 {parent.name}
               </Link>
             ) : null}

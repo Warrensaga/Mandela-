@@ -329,6 +329,7 @@ export type Database = {
         Returns: Json;
       };
       get_order_status: { Args: { p_order_number: string; p_phone: string }; Returns: Json };
+      get_best_sellers: { Args: { p_days?: number; p_limit?: number }; Returns: { product_id: string }[] };
       is_admin: { Args: never; Returns: boolean };
       is_owner: { Args: never; Returns: boolean };
       admin_dashboard: { Args: never; Returns: Json };

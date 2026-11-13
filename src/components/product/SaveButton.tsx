@@ -46,7 +46,7 @@ export function SaveButton({ productId, productName, variant = 'icon', className
       }}
       aria-pressed={saved}
       aria-label={label}
-      className={`relative z-10 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-[#0a1530] shadow-sm transition-colors hover:bg-white ${className}`}
+      className={`z-10 grid h-10 w-10 place-items-center rounded-full bg-[#ffffff]/90 text-[#0a1530] shadow-sm transition-colors hover:bg-[#ffffff] ${className}`}
     >
       {heart}
     </button>

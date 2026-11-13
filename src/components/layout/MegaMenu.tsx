@@ -6,7 +6,7 @@ import { Icon } from '../ui/Icon';
 import { Img } from '../ui/Img';
 
 /**
- * Desktop "Browse categories" button and panel: a text panel on the left and a
+ * Desktop "All categories" button and panel: a text panel on the left and a
  * photo tile per collection (with its sub-categories) on the right.
  * Opens on hover, click or keyboard; Escape closes.
  */
@@ -53,14 +53,14 @@ export function MegaMenu() {
       <button
         ref={buttonRef}
         type="button"
-        className={`inline-flex h-12 w-64 items-center gap-3 px-4 font-label text-[11px] font-bold tracking-[0.16em] text-white uppercase transition-colors ${open ? 'bg-navy-800' : 'bg-brand-600 hover:bg-navy-800'}`}
+        className={`-ml-1 inline-flex h-12 cursor-pointer items-center gap-2.5 border-r border-paper-200 pr-6 pl-1 text-[14px] font-semibold transition-colors ${open ? 'text-brand-600' : 'text-navy-800 hover:text-brand-600'}`}
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((o) => !o)}
       >
         <Icon name="menu" className="h-5 w-5" />
-        Browse categories
-        <Icon name="chevronDown" className={`ml-auto h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} />
+        All categories
+        <Icon name="chevronDown" className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       <AnimatePresence>
         {open && (

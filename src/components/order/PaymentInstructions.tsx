@@ -24,7 +24,7 @@ export function PaymentInstructions({ payment, orderNumber, amountDue, isDeposit
       {hasAny ? (
         <dl className="mt-4 space-y-3 text-sm">
           {hasPaybill && (
-            <div className="rounded-lg bg-paper-100 p-3">
+            <div className="bg-paper-100 p-3">
               <dt className="font-semibold text-navy-800">M-Pesa Paybill</dt>
               <dd className="mt-1 text-muted">
                 Business number <strong className="text-navy-800">{paybill.businessNumber}</strong>, account{' '}
@@ -33,7 +33,7 @@ export function PaymentInstructions({ payment, orderNumber, amountDue, isDeposit
             </div>
           )}
           {till && (
-            <div className="rounded-lg bg-paper-100 p-3">
+            <div className="bg-paper-100 p-3">
               <dt className="font-semibold text-navy-800">M-Pesa Buy Goods (Till)</dt>
               <dd className="mt-1 text-muted">
                 Till number <strong className="text-navy-800">{till}</strong>
@@ -41,7 +41,7 @@ export function PaymentInstructions({ payment, orderNumber, amountDue, isDeposit
             </div>
           )}
           {hasBank && (
-            <div className="rounded-lg bg-paper-100 p-3">
+            <div className="bg-paper-100 p-3">
               <dt className="font-semibold text-navy-800">Bank transfer</dt>
               <dd className="mt-1 space-y-0.5 text-muted">
                 {bank.bankName && <p>{bank.bankName}{bank.branch && `, ${bank.branch}`}</p>}
@@ -52,7 +52,7 @@ export function PaymentInstructions({ payment, orderNumber, amountDue, isDeposit
           )}
         </dl>
       ) : (
-        <p className="mt-4 rounded-lg bg-paper-100 p-3 text-sm text-navy-800">
+        <p className="mt-4 bg-paper-100 p-3 text-sm text-navy-800">
           We will send payment details with your WhatsApp confirmation.
         </p>
       )}

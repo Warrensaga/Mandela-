@@ -23,7 +23,7 @@ export function Gallery({ images, productName, activeImageId }: GalleryProps) {
   }, [activeImageId, images]);
 
   if (!images.length) {
-    return <div className="aspect-[4/3] w-full rounded-2xl bg-paper-200" role="img" aria-label={`${productName}: no photo yet`} />;
+    return <div className="aspect-[4/3] w-full bg-paper-200" role="img" aria-label={`${productName}: no photo yet`} />;
   }
 
   const current = images[Math.min(index, images.length - 1)] as ProductImage;
@@ -35,7 +35,7 @@ export function Gallery({ images, productName, activeImageId }: GalleryProps) {
 
   return (
     <div>
-      <div className="relative overflow-hidden rounded-2xl bg-paper-200">
+      <div className="relative overflow-hidden bg-paper-200">
         <AnimatePresence initial={false} mode="popLayout">
           <motion.div
             key={current.id}
@@ -86,7 +86,7 @@ export function Gallery({ images, productName, activeImageId }: GalleryProps) {
             >
               <Icon name="chevronRight" />
             </button>
-            <p className="absolute right-3 bottom-3 rounded-full bg-navy-900/70 px-2.5 py-1 text-xs text-paper-50" aria-live="polite">
+            <p className="absolute right-3 bottom-3 bg-navy-900/70 px-2.5 py-1 text-xs text-paper-50" aria-live="polite">
               {index + 1} / {images.length}
             </p>
           </>
@@ -101,7 +101,7 @@ export function Gallery({ images, productName, activeImageId }: GalleryProps) {
                 onClick={() => setIndex(i)}
                 aria-label={`Show photo ${i + 1}: ${img.alt}`}
                 aria-current={i === index ? 'true' : undefined}
-                className={`block overflow-hidden rounded-lg border-2 transition-colors ${i === index ? 'border-navy-800' : 'border-transparent hover:border-paper-300'}`}
+                className={`block overflow-hidden border-2 transition-colors ${i === index ? 'border-navy-800' : 'border-transparent hover:border-paper-300'}`}
               >
                 <Img src={img.url} alt="" sizes="96px" className="h-16 w-20 object-cover sm:h-20 sm:w-24" />
               </button>

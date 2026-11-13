@@ -14,7 +14,7 @@ export function DeliveryEstimate({ leadTimeDays, madeToOrder, freeDelivery }: De
   const { zones } = useSite();
   if (!zones.length) return null;
   return (
-    <section aria-labelledby="delivery-estimate" className="rounded-2xl bg-paper-100 p-4 sm:p-5">
+    <section aria-labelledby="delivery-estimate" className="border border-paper-200 bg-paper-100 p-4 sm:p-5">
       <h2 id="delivery-estimate" className="flex items-center gap-2 font-sans text-sm font-semibold text-navy-800">
         <Icon name="truck" className="h-5 w-5 text-brand-600" />
         Delivery estimate

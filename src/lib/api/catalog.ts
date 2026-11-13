@@ -65,6 +65,16 @@ export async function fetchHeroSlides(): Promise<HeroSlide[]> {
   }));
 }
 
+/**
+ * Product ids ranked by units sold in confirmed orders over the last `days`
+ * (most sold first). Only ids come back: no sales figures reach the browser.
+ */
+export async function fetchBestSellerIds(days = 90, limit = 8): Promise<string[]> {
+  const { data, error } = await supabase.rpc('get_best_sellers', { p_days: days, p_limit: limit });
+  if (error) throw toApiError(error);
+  return (data ?? []).map((r) => r.product_id);
+}
+
 function mapSummary(
   row: ProductSummaryRow,
   colours: Map<string, string[]>,

@@ -7,11 +7,13 @@
  *   navy        deep blue-black built from the brand blue, for dark sections
  *   paper       cool whites and greys for light pages and borders
  * terracotta stays for sale badges and error messages.
+ * `logo-*` is the same blue under a second name (announcement strip);
+ * `on-brand` is the text colour used on a brand-blue fill.
  */
 @theme {
   --font-serif: 'Playfair Display', 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
   --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  /* Labels and buttons: bold uppercase sans with wide spacing (not monospace). */
+  /* Labels and buttons: uppercase sans with moderate spacing (not monospace). */
   --font-label: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --color-navy-50: #eef3fb;
@@ -25,6 +27,10 @@
   --color-brand-500: #3b72cf;
   --color-brand-600: #1556c2;
   --color-brand-700: #0f47a3;
+  --color-on-brand: #ffffff;
+
+  --color-logo-500: #3b72cf;
+  --color-logo-600: #1556c2;
 
   --color-gold-300: #f5d49e;
   --color-gold-400: #e9b25f;
@@ -61,9 +67,10 @@
   h3,
   .font-display {
     @apply font-serif font-medium tracking-tight text-navy-800;
+    text-wrap: balance;
   }
   :focus-visible {
-    outline: 2px solid var(--color-gold-500);
+    outline: 2px solid var(--focus-ring, var(--color-logo-600));
     outline-offset: 2px;
   }
   ::selection {
@@ -76,9 +83,9 @@
   .container-page {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
-  /* Small uppercase monospace label, as on the reference layout. */
+  /* Small gold section label above a heading. */
   .eyebrow {
-    @apply font-label text-[10px] font-extrabold tracking-[0.24em] text-gold-ink uppercase sm:text-[11px];
+    @apply font-label text-[11px] font-semibold tracking-[0.2em] text-gold-ink uppercase sm:text-xs;
   }
   .eyebrow-line {
     @apply inline-flex items-center gap-3 before:block before:h-px before:w-6 before:bg-gold-500;
@@ -88,10 +95,14 @@
     @apply inline-block py-3 -my-3;
   }
   .label-mono {
-    @apply font-label text-[11px] font-bold tracking-[0.14em] uppercase;
+    @apply font-label text-[11px] font-semibold tracking-[0.12em] uppercase;
+  }
+  /* Vertical rhythm for home and landing sections. */
+  .section-y {
+    @apply py-16 sm:py-20 lg:py-28;
   }
   .input {
-    @apply w-full rounded-none border border-paper-300 bg-paper-50 px-3.5 py-2.5 text-base text-ink placeholder:text-muted/70 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 focus:outline-none disabled:bg-paper-100;
+    @apply w-full rounded-none border border-paper-300 bg-paper-50 px-3.5 py-2.5 text-base text-ink placeholder:text-muted/70 focus:border-navy-800 focus:ring-2 focus:ring-navy-800/15 focus:outline-none disabled:bg-paper-100;
   }
   .card {
     @apply border border-paper-200 bg-paper-50;
@@ -127,6 +138,11 @@
   --color-ink: #e9eef8;
   --color-muted: #9aa7c0;
   --color-gold-ink: #e9b25f;
+  /* Links and outlines in brand blue are too dark on navy; lift them. */
+  --color-brand-600: #8fb1ec;
+  --color-brand-700: #b7cdf3;
+  --color-on-brand: #0a1530;
+  --focus-ring: var(--color-gold-400);
   /* Sale prices and errors need a lighter red on navy (7:1). */
   --color-terracotta-500: #ff8f7a;
   --color-terracotta-600: #ff8f7a;

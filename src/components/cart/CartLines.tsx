@@ -30,7 +30,7 @@ export function CartLines({ compact = false, onNavigate, flagged }: CartLinesPro
             <Link
               to={`/product/${line.slug}`}
               onClick={onNavigate}
-              className={`shrink-0 overflow-hidden rounded-xl bg-paper-200 ${compact ? 'h-20 w-20' : 'h-20 w-20 min-[360px]:h-24 min-[360px]:w-24 sm:h-28 sm:w-28'}`}
+              className={`shrink-0 overflow-hidden bg-paper-200 ${compact ? 'h-20 w-20' : 'h-20 w-20 min-[360px]:h-24 min-[360px]:w-24 sm:h-28 sm:w-28'}`}
             >
               <Img src={line.imageUrl} alt={line.name} sizes="112px" className="h-full w-full object-cover" />
             </Link>

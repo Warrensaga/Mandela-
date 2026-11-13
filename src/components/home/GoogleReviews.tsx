@@ -23,10 +23,10 @@ const monthYear = (iso: string) => parseISODate(iso).toLocaleDateString('en-KE',
 
 function ReviewCard({ review, url, delay }: { review: Review; url: string; delay: number }) {
   return (
-    <Reveal as="li" delay={delay} className="flex flex-col border border-paper-200 bg-white p-6 sm:p-7">
+    <Reveal as="li" delay={delay} className="flex flex-col border border-paper-200 bg-white p-6 sm:p-8">
       <Stars rating={review.rating} />
       <blockquote className="mt-4 flex-1">
-        <p className="line-clamp-[8] leading-relaxed text-ink/85">{review.body}</p>
+        <p className="line-clamp-[8] font-serif text-lg leading-relaxed text-ink">{review.body}</p>
       </blockquote>
       <footer className="mt-6 flex items-end justify-between gap-3 border-t border-paper-200 pt-4">
         <div className="min-w-0">
@@ -34,11 +34,11 @@ function ReviewCard({ review, url, delay }: { review: Review; url: string; delay
           {review.date && <p className="text-xs text-muted">{monthYear(review.date)}</p>}
         </div>
         {url ? (
-          <a href={url} target="_blank" rel="noopener noreferrer" className="tap shrink-0 font-label text-[10px] font-bold tracking-[0.16em] text-muted uppercase hover:text-brand-600">
+          <a href={url} target="_blank" rel="noopener noreferrer" className="tap shrink-0 font-label text-[10px] font-semibold tracking-[0.12em] text-muted uppercase hover:text-brand-600">
             Google review
           </a>
         ) : (
-          <span className="shrink-0 font-label text-[10px] font-bold tracking-[0.16em] text-muted uppercase">Google review</span>
+          <span className="shrink-0 font-label text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">Google review</span>
         )}
       </footer>
     </Reveal>
@@ -59,12 +59,11 @@ export function GoogleReviews() {
   if (!reviews.data?.length) return <DeliveryAndPayment />;
 
   return (
-    <section aria-labelledby="reviews-heading" className="bg-paper-50 py-20 sm:py-24">
+    <section aria-labelledby="reviews-heading" className="section-y bg-paper-100">
       <div className="container-page">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="eyebrow eyebrow-line">Reviews</p>
-            <h2 id="reviews-heading" className="mt-3 text-4xl sm:text-5xl">What our customers say</h2>
+            <h2 id="reviews-heading" className="text-3xl sm:text-4xl">Reviews from Google</h2>
             {g.rating !== null && (
               <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-navy-800">
                 <span className="font-serif text-3xl">{g.rating.toFixed(1)}</span>

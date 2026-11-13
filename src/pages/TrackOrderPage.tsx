@@ -25,7 +25,7 @@ const PAYMENT_LABELS: Record<OrderTracking['paymentStatus'], string> = {
 
 function StatusSteps({ status }: { status: OrderStatus }) {
   if (status === 'cancelled') {
-    return <p className="rounded-xl bg-ink/5 p-4 text-navy-800">This order was cancelled. Contact us on WhatsApp if this is unexpected.</p>;
+    return <p className="bg-ink/5 p-4 text-navy-800">This order was cancelled. Contact us on WhatsApp if this is unexpected.</p>;
   }
   const current = STEPS.findIndex((s) => s.status === status);
   return (
@@ -35,7 +35,7 @@ function StatusSteps({ status }: { status: OrderStatus }) {
         return (
           <li key={s.status} className="flex items-center gap-3 sm:flex-col sm:text-center" aria-current={i === current ? 'step' : undefined}>
             <span
-              className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 ${done ? 'border-brand-600 bg-brand-600 text-white' : 'border-paper-300 text-muted'}`}
+              className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 ${done ? 'border-brand-600 bg-brand-600 text-on-brand' : 'border-paper-300 text-muted'}`}
             >
               {done ? <Icon name="check" className="h-4 w-4" /> : i + 1}
             </span>

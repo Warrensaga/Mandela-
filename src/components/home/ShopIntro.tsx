@@ -15,8 +15,7 @@ export function ShopIntro() {
   return (
     <section aria-labelledby="shop-intro-heading" className="bg-paper-50 py-16 sm:py-20">
       <div className="container-page max-w-4xl space-y-4 text-sm leading-relaxed text-muted sm:text-base">
-        <p className="eyebrow eyebrow-line">About the shop</p>
-        <h2 id="shop-intro-heading" className="text-3xl text-navy-800 sm:text-4xl">
+        <h2 id="shop-intro-heading" className="text-2xl text-navy-800 sm:text-3xl">
           A furniture shop in Nairobi, with prices online
         </h2>
         <p>

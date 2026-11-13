@@ -20,7 +20,7 @@ export default function CategoryPage() {
 
   if (!ready) {
     return (
-      <div className="theme-dark">
+      <div>
         <div className="container-page py-14">
           <Skeleton className="h-14 w-72 rounded-none" />
         </div>
@@ -52,7 +52,7 @@ export default function CategoryPage() {
   );
 
   return (
-    <div className="theme-dark">
+    <div>
       <Seo
         title={kw.title}
         description={categoryDescription(kw, facts)}
@@ -66,7 +66,6 @@ export default function CategoryPage() {
         ]}
       />
       <PageBand
-        eyebrow={parent ? parent.name : 'Collection'}
         title={category.name}
         description={category.description}
         crumbs={[

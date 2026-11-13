@@ -16,7 +16,7 @@ export function SocialLinks({ tone = 'light', className = '' }: { tone?: 'light'
   const btn =
     tone === 'dark'
       ? 'border-white/25 text-white hover:border-gold-500 hover:bg-gold-500 hover:text-navy-900'
-      : 'border-paper-300 text-navy-800 hover:border-brand-600 hover:bg-brand-600 hover:text-white';
+      : 'border-paper-300 text-navy-800 hover:border-brand-600 hover:bg-brand-600 hover:text-on-brand';
   return (
     <ul className={`flex items-center gap-2 ${className}`}>
       {links.map(({ href, label, Icon }) => (
