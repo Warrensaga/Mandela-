@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router';
 import { PaymentInstructions } from '../components/order/PaymentInstructions';
 import { ButtonAnchor, ButtonLink } from '../components/ui/Button';
 import { Icon, WhatsAppIcon } from '../components/ui/Icon';
+import { Reveal } from '../components/ui/Reveal';
 import { Seo } from '../components/ui/Seo';
 import { recallPlacedOrder } from '../lib/api';
 import { formatDay, formatDayRange, formatKES } from '../lib/format';
@@ -35,7 +36,7 @@ export default function OrderConfirmationPage() {
   return (
     <div className="container-page max-w-4xl py-10 sm:py-14">
       <Seo title={`Order ${order.orderNumber} received`} noindex />
-      <div className="text-center">
+      <Reveal className="text-center">
         <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-600 text-on-brand">
           <Icon name="check" className="h-7 w-7" />
         </span>
@@ -58,9 +59,10 @@ export default function OrderConfirmationPage() {
             Continue on WhatsApp
           </ButtonAnchor>
         )}
-      </div>
+      </Reveal>
 
       <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2 [&>*]:min-w-0">
+        <Reveal delay={0.08}>
         <section aria-labelledby="summary-heading" className="card p-5 sm:p-6">
           <h2 id="summary-heading" className="text-2xl">Order summary</h2>
           <ul className="mt-4 divide-y divide-paper-200 text-sm">
@@ -131,8 +133,9 @@ export default function OrderConfirmationPage() {
             {order.deliveryZoneNotes && <p className="text-xs text-muted">{order.deliveryZoneNotes}</p>}
           </dl>
         </section>
+        </Reveal>
 
-        <div className="space-y-6">
+        <Reveal delay={0.14} className="space-y-6">
           <PaymentInstructions
             payment={settings.payment}
             orderNumber={order.orderNumber}
@@ -146,7 +149,7 @@ export default function OrderConfirmationPage() {
             </Link>
             .
           </p>
-        </div>
+        </Reveal>
       </div>
     </div>
   );

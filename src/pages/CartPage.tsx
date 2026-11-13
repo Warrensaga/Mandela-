@@ -1,5 +1,6 @@
 import { CartLines, cartHasProblems } from '../components/cart/CartLines';
 import { ButtonLink } from '../components/ui/Button';
+import { Reveal } from '../components/ui/Reveal';
 import { Seo } from '../components/ui/Seo';
 import { formatKES } from '../lib/format';
 import { useCart } from '../state/cart';
@@ -12,17 +13,21 @@ export default function CartPage() {
   return (
     <div className="container-page py-10 sm:py-14">
       <Seo title="Your cart" noindex />
-      <h1 className="text-4xl sm:text-5xl">Your cart</h1>
+      <Reveal>
+        <h1 className="text-4xl sm:text-5xl">Your cart</h1>
+      </Reveal>
       {empty ? (
-        <div className="card mt-8 px-6 py-16 text-center">
+        <Reveal className="card mt-8 px-6 py-16 text-center">
           <p className="font-serif text-2xl text-navy-800">Your cart is empty</p>
           <ButtonLink to="/shop" className="mt-6">
             Browse the shop
           </ButtonLink>
-        </div>
+        </Reveal>
       ) : (
         <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_380px] [&>*]:min-w-0">
-          <CartLines />
+          <Reveal delay={0.05}>
+            <CartLines />
+          </Reveal>
           <aside className="card h-fit p-6 lg:sticky lg:top-[calc(var(--header-offset,0px)+1.5rem)] lg:transition-[top] lg:duration-300">
             <h2 className="text-2xl">Summary</h2>
             <dl className="mt-4 space-y-2 text-sm">

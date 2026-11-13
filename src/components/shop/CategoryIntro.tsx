@@ -3,6 +3,7 @@ import type { Category } from '../../lib/api';
 import { formatKES } from '../../lib/format';
 import type { CategoryKeywords } from '../../lib/seoKeywords';
 import { useSite } from '../../state/site';
+import { RevealStack } from '../ui/Reveal';
 
 /**
  * Short, factual text under a category's products, written around what people
@@ -30,6 +31,7 @@ export function CategoryIntro({
   return (
     <section aria-labelledby="category-intro" className="mt-16 border-t border-paper-200 pt-10">
       <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-muted sm:text-base">
+        <RevealStack>
         <h2 id="category-intro" className="text-2xl text-navy-800 sm:text-3xl">
           {category.name} in Kenya
         </h2>
@@ -73,6 +75,7 @@ export function CategoryIntro({
             .
           </p>
         )}
+        </RevealStack>
       </div>
     </section>
   );

@@ -54,7 +54,7 @@ export function SectionHeading({
   link?: { to: string; label: string };
 }) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-3 border-b border-paper-200 pb-5">
+    <Reveal className="flex flex-wrap items-end justify-between gap-x-8 gap-y-3 border-b border-paper-200 pb-5">
       <div className="max-w-2xl">
         <h2 id={id} className="text-3xl sm:text-4xl">
           {title}
@@ -69,7 +69,7 @@ export function SectionHeading({
           {link.label}
         </Link>
       )}
-    </div>
+    </Reveal>
   );
 }
 
@@ -293,7 +293,7 @@ export function PromiseSection() {
   return (
     <section aria-labelledby="steps-heading" className="section-y bg-paper-50">
       <div className="container-page grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
-        <div>
+        <Reveal>
           <h2 id="steps-heading" className="text-3xl sm:text-4xl">
             How ordering works
           </h2>
@@ -304,7 +304,7 @@ export function PromiseSection() {
             </Link>
             .
           </p>
-        </div>
+        </Reveal>
         <ol className="grid gap-6 sm:grid-cols-3">
           {STEPS.map((s, i) => (
             <Reveal as="li" key={s.title} delay={i * 0.05} className="border-t-2 border-navy-800 pt-4">
@@ -326,7 +326,7 @@ export function DeliveryAndPayment() {
   return (
     <section aria-labelledby="delivery-heading" className="section-y bg-paper-100">
       <div className="container-page grid gap-8 lg:grid-cols-[1fr_2fr] lg:gap-16">
-        <div>
+        <Reveal>
           <h2 id="delivery-heading" className="text-3xl sm:text-4xl">
             Delivery fees
           </h2>
@@ -337,8 +337,8 @@ export function DeliveryAndPayment() {
           <Link to="/delivery" className="mt-4 inline-block py-2 text-sm font-semibold text-navy-800 underline underline-offset-[6px] hover:text-brand-600">
             Delivery and installation details
           </Link>
-        </div>
-        <Reveal>
+        </Reveal>
+        <Reveal delay={0.08}>
           <table className="w-full border-collapse bg-paper-50 text-left text-[15px]">
             <thead>
               <tr className="border-b border-paper-200 text-sm text-muted">
@@ -377,7 +377,7 @@ export function StayInTouch() {
   if (!settings.social.instagram && !settings.social.tiktok) return null;
   return (
     <section aria-labelledby="follow-heading" className="border-t border-paper-200 bg-paper-50 py-10 sm:py-12">
-      <div className="container-page flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+      <Reveal className="container-page flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 id="follow-heading" className="font-sans text-lg font-semibold">
             Follow {settings.storeName}
@@ -385,7 +385,7 @@ export function StayInTouch() {
           <p className="mt-1 text-[15px] text-muted">New pieces and photos from the workshop, on Instagram and TikTok.</p>
         </div>
         <SocialLinks />
-      </div>
+      </Reveal>
     </section>
   );
 }
@@ -398,7 +398,7 @@ export function CustomCta() {
     <section aria-labelledby="custom-heading" className="relative isolate overflow-hidden bg-[#0a1530] text-white">
       {bg && <Img src={bg} alt="" sizes="100vw" className="absolute inset-0 -z-20 h-full w-full object-cover" />}
       <span className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0a1530] via-[#0a1530]/90 to-[#0a1530]/60" aria-hidden="true" />
-      <div className="container-page py-16 sm:py-24">
+      <Reveal className="container-page py-16 sm:py-24">
         <h2 id="custom-heading" className="max-w-xl text-3xl !text-white sm:text-5xl">
           Need a different size or fabric?
         </h2>
@@ -422,7 +422,7 @@ export function CustomCta() {
             </ButtonAnchor>
           )}
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

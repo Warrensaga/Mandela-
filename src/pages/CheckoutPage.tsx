@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { CartLines, cartHasProblems } from '../components/cart/CartLines';
 import { Button, ButtonLink } from '../components/ui/Button';
 import { Field } from '../components/ui/Field';
+import { Reveal } from '../components/ui/Reveal';
 import { Seo } from '../components/ui/Seo';
 import { ApiError, createOrder, fetchLivePricing, rememberPlacedOrder } from '../lib/api';
 import { amountToFreeDelivery, deliveryWindow, estimateTotals, kenyaToday } from '../lib/checkout';
@@ -167,10 +168,12 @@ export default function CheckoutPage() {
   return (
     <div className="container-page py-10 sm:py-14">
       <Seo title="Checkout" noindex />
+      <Reveal>
       <h1 className="text-4xl sm:text-5xl">Checkout</h1>
       <p className="mt-2 text-sm text-muted">
         No payment is taken online. We confirm your order on WhatsApp first.
       </p>
+      </Reveal>
 
       {/* Phones: the summary sits below the form, so show the total up front. */}
       <a
@@ -187,6 +190,7 @@ export default function CheckoutPage() {
 
       <form onSubmit={submit} noValidate className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_400px] [&>*]:min-w-0">
         <div className="space-y-10">
+          <Reveal>
           <section aria-labelledby="contact-heading">
             <h2 id="contact-heading" className="text-2xl">Your details</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -209,7 +213,9 @@ export default function CheckoutPage() {
               </div>
             </div>
           </section>
+          </Reveal>
 
+          <Reveal>
           <section aria-labelledby="delivery-heading">
             <h2 id="delivery-heading" className="text-2xl">Delivery</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -265,10 +271,11 @@ export default function CheckoutPage() {
               </Field>
             </div>
           </section>
+          </Reveal>
         </div>
 
         <aside id="order-summary" className="h-fit scroll-mt-40 lg:sticky lg:top-[calc(var(--header-offset,0px)+1.5rem)] lg:transition-[top] lg:duration-300">
-          <div className="card p-5 sm:p-6">
+          <Reveal delay={0.1} className="card p-5 sm:p-6">
             <h2 className="text-2xl">Your order</h2>
             <CartLines compact flagged={flagged} />
             {!pricesChecked && <p className="text-xs text-muted">Checking current prices…</p>}
@@ -305,7 +312,7 @@ export default function CheckoutPage() {
             <p className="mt-3 text-center text-xs text-muted">
               Next, you will see payment details and can send your order to us on WhatsApp. Final totals are confirmed by our system.
             </p>
-          </div>
+          </Reveal>
           <p className="mt-4 text-center text-sm">
             <Link to="/cart" className="text-navy-800 underline underline-offset-4">Edit cart</Link>
           </p>

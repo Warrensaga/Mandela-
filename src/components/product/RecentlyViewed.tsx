@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useAsync } from '../../hooks/useAsync';
 import { fetchCatalog } from '../../lib/api';
 import { readRecentlyViewed } from '../../state/recentlyViewed';
+import { Reveal } from '../ui/Reveal';
 import { ProductGrid } from './ProductGrid';
 
 /**
@@ -26,7 +27,9 @@ export function RecentlyViewed({ excludeId, limit = 4 }: { excludeId?: string; l
 
   return (
     <section aria-labelledby="recent-heading" className="mt-20 border-t border-paper-200 pt-12">
-      <h2 id="recent-heading" className="mb-8 text-3xl sm:text-4xl">Recently viewed</h2>
+      <Reveal>
+        <h2 id="recent-heading" className="mb-8 text-3xl sm:text-4xl">Recently viewed</h2>
+      </Reveal>
       <ProductGrid products={products} />
     </section>
   );

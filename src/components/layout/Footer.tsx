@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { Reveal } from '../ui/Reveal';
 import { formatKePhone } from '../../lib/phone';
 import { whatsappLink } from '../../lib/whatsapp';
 import { useSite } from '../../state/site';
@@ -53,7 +54,7 @@ export function Footer() {
     <footer className="relative mt-24 border-t-4 border-navy-800 bg-paper-50">
       <span className="absolute -top-1 left-0 h-1 w-28 bg-gold-500" aria-hidden="true" />
       {/* Columns */}
-      <div className="container-page grid grid-cols-2 gap-x-6 gap-y-10 py-14 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr] lg:gap-12">
+      <Reveal className="container-page grid grid-cols-2 gap-x-6 gap-y-10 py-14 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr] lg:gap-12">
         <div className="col-span-2 lg:col-span-1">
           <img src="/logo.png" alt={settings.storeName} width={149} height={93} loading="lazy" className="h-16 w-auto" />
           <ul className="mt-6 space-y-1 text-[15px]">
@@ -111,7 +112,7 @@ export function Footer() {
             </Link>
           </div>
         </div>
-      </div>
+      </Reveal>
 
       {/* Legal bar */}
       <div className="theme-dark">

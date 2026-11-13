@@ -4,6 +4,7 @@ import { PageBand } from '../components/layout/PageBand';
 import { Button, ButtonAnchor } from '../components/ui/Button';
 import { Field } from '../components/ui/Field';
 import { Icon, WhatsAppIcon } from '../components/ui/Icon';
+import { Reveal, RevealStack } from '../components/ui/Reveal';
 import { Seo } from '../components/ui/Seo';
 import { PAGE_KEYWORDS } from '../lib/seoKeywords';
 import { mapDirectionsUrl, mapEmbedUrl, mapOpenUrl, showroomLocation } from '../lib/maps';
@@ -96,6 +97,7 @@ export default function ContactPage() {
       />
 
       <div className="container-page grid grid-cols-1 gap-8 py-12 lg:grid-cols-[minmax(0,1fr)_360px] [&>*]:min-w-0 lg:py-16">
+        <Reveal>
         <form onSubmit={submit} noValidate className="grid content-start gap-5 sm:grid-cols-2">
           <Field label="Full name *" error={errors.name}>
             {(p) => <input {...p} className="input" autoComplete="name" placeholder="Jane Wanjiru" value={form.name} onChange={(e) => set('name', e.target.value)} />}
@@ -126,8 +128,10 @@ export default function ContactPage() {
             </p>
           </div>
         </form>
+        </Reveal>
 
         <aside className="space-y-4">
+          <RevealStack step={0.08}>
           <section className="border border-paper-300 bg-paper-50 p-5">
             <h2 className="label-mono text-muted">Call or WhatsApp</h2>
             {phone && (
@@ -203,11 +207,12 @@ export default function ContactPage() {
               ))}
             </ul>
           </Panel>
+          </RevealStack>
         </aside>
       </div>
 
       <section id="map" aria-labelledby="map-heading" className="scroll-mt-40 border-t border-paper-200">
-        <div className="container-page flex flex-wrap items-end justify-between gap-4 py-10">
+        <Reveal className="container-page flex flex-wrap items-end justify-between gap-4 py-10">
           <div>
             <p className="eyebrow eyebrow-line">Visit us</p>
             <h2 id="map-heading" className="mt-3 text-4xl sm:text-5xl">Our showroom</h2>
@@ -223,7 +228,7 @@ export default function ContactPage() {
               Open in Google Maps ↗
             </ButtonAnchor>
           </div>
-        </div>
+        </Reveal>
         <div className="relative h-[420px] w-full bg-paper-200 sm:h-[480px]">
           <iframe
             title={`Map showing ${settings.storeName}${location.exact ? ` at ${settings.contact.address}` : ' in Nairobi'}`}
