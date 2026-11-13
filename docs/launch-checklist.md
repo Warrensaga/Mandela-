@@ -28,7 +28,10 @@ Status of the pre-launch check on 12 Nov 2026, and what is left before opening t
    (e.g. `https://mandelaheritage.co.ke`). Redeploy after adding them.
 3. **Custom domain**: Vercel → Settings → Domains. Point your domain's DNS as Vercel shows.
 4. **Supabase → Authentication → URL Configuration**: Site URL = your live domain; Redirect URLs =
-   `https://<your-domain>/**` (keep `http://localhost:5173/**` for development).
+   `https://<your-domain>/**` and `https://mandelafurn.vercel.app/**` (keep `http://localhost:5173/**` for
+   development). The admin "Forgot password" email links to `/admin/reset-password`; if that address is
+   not allowed here, Supabase sends people to the Site URL instead and the reset cannot be finished.
+   Test it once: sign-in page → enter your email → Forgot password → open the email → set a new password.
 5. **Supabase Auth settings** in [security.md](security.md): confirm email on, password length 10,
    leaked-password protection (paid plans).
 6. **Admin → Settings**:

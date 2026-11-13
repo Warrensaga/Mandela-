@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useSearchParams } from 'react-router';
-import { ApiError, sendPasswordReset, signIn } from '../../lib/api/admin';
+import { ApiError, passwordResetLink, sendPasswordReset, signIn } from '../../lib/api/admin';
 import { useAdminSession } from '../auth';
 import { Btn, inputCls, Notice } from '../components/ui';
 
@@ -53,6 +53,10 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
 
+  // Reset emails sent before the reset page existed pointed here: finish the reset there.
+  const resetLink = passwordResetLink();
+  if (resetLink.opened || resetLink.error) return <Navigate to="/admin/reset-password" replace />;
+
   // Signed in: admins go to the admin; accounts awaiting approval see the waiting screen there.
   if (session.status === 'ready') return <Navigate to={session.identity.role ? target : '/admin'} replace />;
 
@@ -85,7 +89,7 @@ export default function LoginPage() {
     }
     try {
       await sendPasswordReset(email);
-      setInfo('If that email has an account, a reset link is on its way.');
+      setInfo('If that email has an account, a reset link is on its way. It opens a page where you choose a new password. The link works once and expires after about an hour.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not send the reset email.');
     }

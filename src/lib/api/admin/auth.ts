@@ -1,6 +1,6 @@
 import type { Session } from '@supabase/supabase-js';
 import type { AccessRequestStatus, AdminRole } from '../../database.types';
-import { supabase } from '../../supabase';
+import { authLink, supabase } from '../../supabase';
 import { ApiError, toApiError } from '../errors';
 
 export interface AdminIdentity {
@@ -44,17 +44,47 @@ export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
 }
 
+/** Emails a one-time link to /admin/reset-password, where a new password is chosen. */
 export async function sendPasswordReset(email: string): Promise<void> {
   const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-    redirectTo: `${window.location.origin}/admin/login`,
+    redirectTo: `${window.location.origin}/admin/reset-password`,
   });
-  if (error) throw new ApiError('RESET_FAILED', error.message);
+  if (error) {
+    const msg = /rate limit|too many|security purposes/i.test(error.message)
+      ? 'Too many reset emails were requested. Please wait a few minutes and try again.'
+      : error.message;
+    throw new ApiError('RESET_FAILED', msg);
+  }
+}
+
+/** Whether this page was opened from a password-reset email, and any error that link carried. */
+export function passwordResetLink(): { opened: boolean; error: string | null } {
+  return { opened: authLink.recovery, error: authLink.error };
+}
+
+/**
+ * Marks the reset link as handled (so signing out later does not reopen the
+ * reset page) and removes its one-time tokens or error from the address bar.
+ */
+export function clearAuthLinkFromUrl(): void {
+  authLink.recovery = false;
+  authLink.error = null;
+  if (window.location.hash) window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search);
 }
 
 export async function changePassword(password: string): Promise<void> {
   if (password.length < 10) throw new ApiError('WEAK_PASSWORD', 'Use at least 10 characters.');
   const { error } = await supabase.auth.updateUser({ password });
-  if (error) throw new ApiError('PASSWORD_FAILED', error.message);
+  if (error) {
+    const msg = /different from the old/i.test(error.message)
+      ? 'Choose a password you have not used before.'
+      : /pwned|leaked|compromised|known to be weak/i.test(error.message)
+        ? 'That password has appeared in a data breach. Please choose another.'
+        : /session|jwt|expired/i.test(error.message)
+          ? 'Your reset link has expired. Request a new one from the sign-in page.'
+          : error.message;
+    throw new ApiError('PASSWORD_FAILED', msg);
+  }
 }
 
 /** Resolves the signed-in user and their admin role (from admin_users, own row only). */

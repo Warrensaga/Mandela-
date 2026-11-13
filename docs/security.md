@@ -53,5 +53,6 @@ Checks: `supabase/tests/security_check.sql`, `rls_check.sql`, `admin_check.sql`,
 3. **Authentication → Rate limits**: keep the defaults or lower them for sign-ups.
 4. **Authentication → URL Configuration**: set **Site URL** to your live domain and
    list only your own domains under **Redirect URLs** (plus `http://localhost:5173/**` for development).
+   The "Forgot password" email returns to `/admin/reset-password`, so each domain needs its `/**` entry.
 5. Turn on **multi-factor authentication** for the owner account if your plan allows it, and use a password manager.
 6. Never share the service role key, and never add it to Vercel environment variables.
