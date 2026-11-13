@@ -94,11 +94,18 @@ export function ShopView({ categorySlug, chips }: ShopViewProps) {
   return (
     <div>
       <div className="sticky top-[var(--header-offset,0px)] z-20 transition-[top] duration-300 -mx-4 border-y border-paper-200 bg-paper-50/95 px-4 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-        <div className="flex flex-col gap-3 py-3 lg:flex-row lg:items-center">
-          <nav aria-label="Collections" className="-mx-1 flex min-w-0 flex-1 gap-2 overflow-x-auto px-1 [scrollbar-width:none]" data-lenis-prevent>
+        {/* Phones: chips scroll sideways (faded edge shows there is more). Desktop: chips wrap
+            and never slide under the search box; the controls sit beside them when they fit,
+            otherwise on the next line, right-aligned. */}
+        <div className="flex flex-col gap-3 py-3 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-6">
+          <nav
+            aria-label="Collections"
+            className="-mx-1 flex min-w-0 gap-2 overflow-x-auto px-1 pr-8 [mask-image:linear-gradient(to_right,#000_calc(100%-2rem),transparent)] [scrollbar-width:none] lg:flex-[1_1_auto] lg:flex-wrap lg:overflow-visible lg:pr-1 lg:[mask-image:none]"
+            data-lenis-prevent
+          >
             {chips ?? defaultChips}
           </nav>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2 lg:ml-auto">
             <form role="search" onSubmit={(e) => e.preventDefault()} className="relative min-w-0 flex-1 lg:w-52 lg:flex-none">
               <label htmlFor="shop-search" className="sr-only">Search products</label>
               <input
