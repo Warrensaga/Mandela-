@@ -4,5 +4,6 @@ export * from './settings';
 export * from './orders';
 export * from './customRequests';
 export * from './reviews';
+export * from './projects';
 export * from './errors';
 export type * from './types';

@@ -271,6 +271,9 @@ export function Header() {
               <NavLink to="/custom-request" className={({ isActive }) => `${navItem} ${isActive ? activeMark : ''}`}>
                 Custom orders
               </NavLink>
+              <NavLink to="/projects" className={({ isActive }) => `${navItem} ${isActive ? activeMark : ''}`}>
+                Projects
+              </NavLink>
               <NavLink to="/track-order" className={({ isActive }) => `${navItem} ${isActive ? activeMark : ''}`}>
                 Track order
               </NavLink>

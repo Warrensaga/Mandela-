@@ -30,6 +30,7 @@ export const adminRoutes: RouteObject[] = [
       { path: 'hero', lazy: page(() => import('./pages/HeroSlidesPage')) },
       { path: 'zones', lazy: page(() => import('./pages/DeliveryZonesPage')) },
       { path: 'reviews', lazy: page(() => import('./pages/ReviewsPage')) },
+      { path: 'projects', lazy: page(() => import('./pages/ProjectsPage')) },
       { path: 'guides', lazy: page(() => import('./pages/GuidesPage')) },
       { path: 'settings', lazy: page(() => import('./pages/SettingsPage')) },
       { path: 'team', lazy: page(() => import('./pages/TeamPage')) },

@@ -42,8 +42,9 @@ Status of the pre-launch check on 12 Nov 2026, and what is left before opening t
 8. **Delete test orders**: order MH-000019 (pending) looks like a test; delete it under Admin → Orders
    if so. Order numbers continue from the last one used (the next will be MH-000035); ask if you want
    the numbering restarted.
-9. **Reviews**: Admin → Reviews. Paste the link to your Google reviews, your overall rating and count, and copy in your best real reviews exactly as written. They replace the delivery/payment block on the home page.
-10. **Delivery zones**: confirm the four zones, fees and days match what you actually charge.
+9. **Projects**: Admin → Projects. Add homes, offices and rentals you have furnished, with your own photos (ask clients first). Publish at least one and it also appears on the home page.
+10. **Reviews**: Admin → Reviews. Paste the link to your Google reviews, your overall rating and count, and copy in your best real reviews exactly as written. They replace the delivery/payment block on the home page.
+11. **Delivery zones**: confirm the four zones, fees and days match what you actually charge.
 
 ## Missing pages (needed before or soon after launch)
 

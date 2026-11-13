@@ -1,4 +1,4 @@
-import type { DeliveryZoneRow, GuideRow, Json, ReviewRow, SettingRow } from '../../database.types';
+import type { DeliveryZoneRow, GuideRow, Json, ProjectRow, ReviewRow, SettingRow } from '../../database.types';
 import { supabase } from '../../supabase';
 import { toApiError } from '../errors';
 
@@ -43,6 +43,25 @@ export async function saveReview(row: Partial<ReviewRow> & { author_name: string
 
 export async function deleteReview(id: string): Promise<void> {
   check(await supabase.from('reviews').delete().eq('id', id));
+}
+
+// ---------------------------------------------------------------- projects
+
+export async function listAllProjects(): Promise<ProjectRow[]> {
+  return check(await supabase.from('projects').select('*').order('sort_order').order('created_at', { ascending: false }));
+}
+
+export async function saveProject(row: Partial<ProjectRow> & { title: string; slug: string }): Promise<string> {
+  if (row.id) {
+    const { id, ...patch } = row;
+    check(await supabase.from('projects').update(patch).eq('id', id));
+    return id;
+  }
+  return check(await supabase.from('projects').insert(row).select('id').single()).id;
+}
+
+export async function deleteProject(id: string): Promise<void> {
+  check(await supabase.from('projects').delete().eq('id', id));
 }
 
 // ---------------------------------------------------------------- guides

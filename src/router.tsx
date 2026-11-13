@@ -17,6 +17,8 @@ const CustomRequestPage = lazy(() => import('./pages/CustomRequestPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const CollectionsPage = lazy(() => import('./pages/CollectionsPage'));
 const SavedPage = lazy(() => import('./pages/SavedPage'));
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
+const ProjectPage = lazy(() => import('./pages/ProjectPage'));
 const DeliveryPage = lazy(() => import('./pages/InfoPages').then((m) => ({ default: m.DeliveryPage })));
 const PaymentPage = lazy(() => import('./pages/InfoPages').then((m) => ({ default: m.PaymentPage })));
 const FaqPage = lazy(() => import('./pages/InfoPages').then((m) => ({ default: m.FaqPage })));
@@ -55,6 +57,8 @@ export const router = createBrowserRouter([
       { path: 'payment', element: <PaymentPage /> },
       { path: 'faq', element: <FaqPage /> },
       { path: 'saved', element: <SavedPage /> },
+      { path: 'projects', element: <ProjectsPage /> },
+      { path: 'projects/:slug', element: <ProjectPage /> },
       // Still to come (Phase 4): guides, About, and Returns & Warranty (needs the owner's policy).
       { path: '*', element: <NotFoundPage /> },
     ],

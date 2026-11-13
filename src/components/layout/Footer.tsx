@@ -12,6 +12,7 @@ const SHOP_LINKS = [
   { to: '/shop?offers=1', label: 'Offers' },
   { to: '/categories', label: 'Collections' },
   { to: '/custom-request', label: 'Custom pieces' },
+  { to: '/projects', label: 'Projects' },
   { to: '/saved', label: 'Saved items' },
 ];
 

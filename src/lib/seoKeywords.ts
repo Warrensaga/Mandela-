@@ -241,6 +241,11 @@ export const PAGE_KEYWORDS = {
     description:
       'Custom made furniture in Nairobi: sofas, beds, dining tables and wardrobes made to your size, fabric and finish in our workshop. Send your idea and get a quote.',
   },
+  projects: {
+    title: 'Home & Office Furnishing Projects in Nairobi',
+    description:
+      'Homes, apartments, Airbnbs and offices we have furnished in Nairobi and across Kenya. See the photos, then tell us about your space for a furnishing quote.',
+  },
   contact: {
     title: 'Furniture Showroom in Nairobi: Visit or Call',
     description:

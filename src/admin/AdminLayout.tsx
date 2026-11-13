@@ -14,6 +14,7 @@ const NAV: { to: string; label: string; end?: boolean; ownerOnly?: boolean }[] =
   { to: '/admin/custom-requests', label: 'Custom requests' },
   { to: '/admin/hero', label: 'Hero carousel' },
   { to: '/admin/zones', label: 'Delivery zones' },
+  { to: '/admin/projects', label: 'Projects' },
   { to: '/admin/reviews', label: 'Reviews' },
   { to: '/admin/guides', label: 'Guides' },
   { to: '/admin/settings', label: 'Settings' },

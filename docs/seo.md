@@ -17,7 +17,8 @@ Keyword targets and what to do when adding products: see [seo-keywords.md](seo-k
   `/order/`, the filter/sort/search parameters, and ad/social tracking parameters; points to the sitemap.
 - **Sitemaps** (generated at build from the live catalogue, Yoast/Shopify layout):
   `sitemap.xml` (index) → `sitemap-pages.xml`, `sitemap-categories.xml` (only categories that have
-  products), `sitemap-products.xml` (with product photos). Every URL has `lastmod`.
+  products), `sitemap-products.xml` (with product photos), `sitemap-projects.xml` (published projects with
+  their photos, once there is at least one). Every URL has `lastmod`.
 - **Every page**: unique title and description (cut to ~158 characters), canonical URL (query strings
   removed, so filter URLs point to the main page), robots meta, Open Graph and Twitter card tags.
   Cart, checkout and order pages are `noindex`.
