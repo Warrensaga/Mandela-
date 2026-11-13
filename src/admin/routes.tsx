@@ -8,6 +8,7 @@ const named = <K extends string>(loader: () => Promise<Record<K, React.Component
 export const adminRoutes: RouteObject[] = [
   { path: '/admin/login', lazy: page(() => import('./pages/LoginPage')) },
   { path: '/admin/signup', lazy: page(() => import('./pages/SignUpPage')) },
+  { path: '/admin/reset-password', lazy: page(() => import('./pages/ResetPasswordPage')) },
   {
     path: '/admin/orders/:id/print',
     lazy: named(() => import('./AdminLayout'), 'AdminBare'),
