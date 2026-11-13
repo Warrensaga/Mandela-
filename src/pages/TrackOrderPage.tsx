@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router';
 import { Button } from '../components/ui/Button';
 import { Field } from '../components/ui/Field';
 import { Icon } from '../components/ui/Icon';
+import { Reveal } from '../components/ui/Reveal';
 import { Seo } from '../components/ui/Seo';
 import { ApiError, getOrderStatus, type OrderStatus, type OrderTracking } from '../lib/api';
 import { formatDay, formatDayRange, formatKES, formatLongDate } from '../lib/format';
@@ -81,10 +82,13 @@ export default function TrackOrderPage() {
   return (
     <div className="container-page max-w-3xl py-10 sm:py-14">
       <Seo title="Track your order" description="Check the status of your Mandela Heritage order with your order number and phone." />
+      <Reveal>
       <p className="eyebrow">Order tracking</p>
       <h1 className="mt-2 text-4xl sm:text-5xl">Track your order</h1>
       <p className="mt-3 text-muted">Enter the order number from your confirmation and the phone number you used.</p>
+      </Reveal>
 
+      <Reveal delay={0.08}>
       <form onSubmit={submit} noValidate className="card mt-8 grid gap-4 p-5 sm:grid-cols-[1fr_1fr_auto] sm:items-end sm:p-6">
         <Field label="Order number" error={errors.order}>
           {(p) => <input {...p} className="input uppercase" placeholder="MH-000123" value={orderNumber} onChange={(e) => setOrderNumber(e.target.value)} autoComplete="off" />}
@@ -96,6 +100,7 @@ export default function TrackOrderPage() {
           {loading ? 'Checking…' : 'Track'}
         </Button>
       </form>
+      </Reveal>
 
       <div aria-live="polite" className="mt-8">
         {errors.form && <p className="text-terracotta-600">{errors.form}</p>}
@@ -105,6 +110,7 @@ export default function TrackOrderPage() {
           </p>
         )}
         {result && (
+          <Reveal>
           <section className="card space-y-6 p-5 sm:p-6" aria-labelledby="result-heading">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 id="result-heading" className="text-3xl">{result.orderNumber}</h2>
@@ -144,6 +150,7 @@ export default function TrackOrderPage() {
               ))}
             </ul>
           </section>
+          </Reveal>
         )}
       </div>
     </div>

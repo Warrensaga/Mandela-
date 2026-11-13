@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router';
 import { PageBand } from '../components/layout/PageBand';
 import { ButtonAnchor, ButtonLink } from '../components/ui/Button';
 import { WhatsAppIcon } from '../components/ui/Icon';
+import { Reveal, RevealStack } from '../components/ui/Reveal';
 import { nodeText, Seo } from '../components/ui/Seo';
 import { faqLd } from '../lib/seo';
 import { PAGE_KEYWORDS } from '../lib/seoKeywords';
@@ -65,8 +66,10 @@ function Shell({
       />
       <PageBand title={title} description={description} crumbs={[{ to: '/', label: 'Home' }, { label: crumb }]} />
       <div className="container-page max-w-4xl py-12 sm:py-16">
-        {children}
-        <HelpCta />
+        <RevealStack>{children}</RevealStack>
+        <Reveal>
+          <HelpCta />
+        </Reveal>
       </div>
     </>
   );
@@ -225,13 +228,15 @@ export function FaqPage() {
     >
       <div className="divide-y divide-paper-200 border-y border-paper-200">
         {faqs.map((f, i) => (
-          <details key={f.q} className="group" open={i === 0}>
+          <Reveal key={f.q} delay={Math.min(i, 4) * 0.04}>
+          <details className="group" open={i === 0}>
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-lg font-medium text-navy-800 [&::-webkit-details-marker]:hidden">
               {f.q}
               <span className="text-2xl text-gold-ink transition-transform group-open:rotate-45" aria-hidden="true">+</span>
             </summary>
             <div className="pb-5 leading-relaxed text-muted">{f.a}</div>
           </details>
+          </Reveal>
         ))}
       </div>
     </Shell>

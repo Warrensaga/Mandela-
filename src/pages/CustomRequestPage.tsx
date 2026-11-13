@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Button, ButtonAnchor } from '../components/ui/Button';
 import { Field } from '../components/ui/Field';
 import { Icon, WhatsAppIcon } from '../components/ui/Icon';
+import { Reveal } from '../components/ui/Reveal';
 import { Seo } from '../components/ui/Seo';
 import { PAGE_KEYWORDS } from '../lib/seoKeywords';
 import { ApiError, submitCustomRequest, validateReferenceImage } from '../lib/api';
@@ -82,6 +83,7 @@ export default function CustomRequestPage() {
     return (
       <div className="container-page max-w-xl py-20 text-center">
         <Seo title="Request received" noindex />
+        <Reveal>
         <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-600 text-on-brand">
           <Icon name="check" className="h-7 w-7" />
         </span>
@@ -96,6 +98,7 @@ export default function CustomRequestPage() {
             Follow up on WhatsApp
           </ButtonAnchor>
         )}
+        </Reveal>
       </div>
     );
   }
@@ -110,13 +113,16 @@ export default function CustomRequestPage() {
           { name: 'Custom orders', path: '/custom-request' },
         ]}
       />
+      <Reveal>
       <p className="eyebrow">Custom and made to order</p>
       <h1 className="mt-2 text-4xl sm:text-5xl">Request a custom piece</h1>
       <p className="mt-3 text-muted">
         Describe what you need and attach a photo if you have one. We reply with a quote on WhatsApp. Production starts after a{' '}
         {settings.depositPercent}% deposit.
       </p>
+      </Reveal>
 
+      <Reveal delay={0.08}>
       <form onSubmit={submit} noValidate className="card mt-8 grid gap-5 p-5 sm:grid-cols-2 sm:p-8">
         <Field label="Your name" error={errors.customerName}>
           {(p) => <input {...p} className="input" autoComplete="name" value={form.customerName} onChange={(e) => set('customerName', e.target.value)} />}
@@ -171,6 +177,7 @@ export default function CustomRequestPage() {
           </Button>
         </div>
       </form>
+      </Reveal>
     </div>
   );
 }

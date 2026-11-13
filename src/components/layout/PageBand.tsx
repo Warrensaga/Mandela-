@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
+import { Reveal } from '../ui/Reveal';
 
 interface PageBandProps {
   title: ReactNode;
@@ -14,7 +15,7 @@ interface PageBandProps {
 export function PageBand({ title, description, crumbs, aside, tone = 'light' }: PageBandProps) {
   return (
     <div className={tone === 'dark' ? 'theme-dark' : 'border-b border-paper-200 bg-paper-100'}>
-      <div className="container-page py-8 sm:py-12">
+      <Reveal className="container-page py-8 sm:py-12">
         {crumbs && (
           <nav aria-label="Breadcrumb" className="mb-5 text-[13px] text-muted">
             <ol className="flex flex-wrap items-center gap-2">
@@ -38,7 +39,7 @@ export function PageBand({ title, description, crumbs, aside, tone = 'light' }: 
           </div>
           {aside}
         </div>
-      </div>
+      </Reveal>
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { Button, ButtonAnchor } from '../components/ui/Button';
 import { Icon, WhatsAppIcon } from '../components/ui/Icon';
 import { Price } from '../components/ui/Price';
 import { QuantityInput } from '../components/ui/QuantityInput';
+import { Reveal } from '../components/ui/Reveal';
 import { Seo } from '../components/ui/Seo';
 import { GridSkeleton, Skeleton } from '../components/ui/Skeleton';
 import { StockBadge } from '../components/ui/StockBadge';
@@ -190,10 +191,12 @@ function ProductView({ product }: { product: ProductDetail }) {
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-14 [&>*]:min-w-0">
           <div className="lg:sticky lg:top-[calc(var(--header-offset,0px)+1.5rem)] lg:self-start lg:transition-[top] lg:duration-300">
-            <Gallery images={product.images} productName={product.name} activeImageId={variant?.imageId} />
+            <Reveal>
+              <Gallery images={product.images} productName={product.name} activeImageId={variant?.imageId} />
+            </Reveal>
           </div>
 
-          <div>
+          <Reveal delay={0.08}>
             {category && <p className="eyebrow">{category.name}</p>}
             <h1 className="mt-2 text-4xl leading-tight sm:text-5xl">{product.name}</h1>
             <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
@@ -279,18 +282,18 @@ function ProductView({ product }: { product: ProductDetail }) {
                 </p>
               </Accordion>
             </div>
-          </div>
+          </Reveal>
         </div>
 
         <section aria-labelledby="related-heading" className="mt-20 border-t border-paper-200 pt-12">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <Reveal className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <h2 id="related-heading" className="text-3xl sm:text-4xl">More like this</h2>
             {category && (
               <Link to={`/category/${category.slug}`} className="tap text-sm font-semibold text-navy-800 underline decoration-paper-300 underline-offset-[6px] hover:text-brand-600 hover:decoration-brand-600">
                 More in {category.name}
               </Link>
             )}
-          </div>
+          </Reveal>
           {related.loading && !related.data ? <GridSkeleton count={4} /> : <ProductGrid products={relatedProducts} />}
         </section>
 

@@ -36,8 +36,10 @@ export function StorefrontLayout() {
           <CartDrawer />
           <BackToTop />
           <FloatingWhatsApp />
-          {/* Top of page on new navigation, previous position on browser back. */}
-          <ScrollRestoration getKey={(location) => location.key} />
+          {/* Top of page on new navigation, previous position on browser back.
+              Full page loads all share the key "default", so key those by path:
+              otherwise opening /cart would reuse the last page's scroll position. */}
+          <ScrollRestoration getKey={(location) => (location.key === 'default' ? location.pathname : location.key)} />
         </WhatsAppProvider>
       </SmoothScrollProvider>
     </MotionConfig>

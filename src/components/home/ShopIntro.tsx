@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { useSite } from '../../state/site';
+import { RevealStack } from '../ui/Reveal';
 
 /**
  * Plain-language "who we are" text for search engines and shoppers, built
@@ -15,6 +16,7 @@ export function ShopIntro() {
   return (
     <section aria-labelledby="shop-intro-heading" className="bg-paper-50 py-16 sm:py-20">
       <div className="container-page max-w-4xl space-y-4 text-sm leading-relaxed text-muted sm:text-base">
+        <RevealStack>
         <h2 id="shop-intro-heading" className="text-2xl text-navy-800 sm:text-3xl">
           A furniture shop in Nairobi, with prices online
         </h2>
@@ -57,6 +59,7 @@ export function ShopIntro() {
             .
           </p>
         )}
+        </RevealStack>
       </div>
     </section>
   );
