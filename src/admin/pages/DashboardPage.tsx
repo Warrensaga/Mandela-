@@ -15,6 +15,9 @@ function Stat({ label, value, sub, to }: { label: string; value: string; sub?: s
   return to ? <Link to={to}>{body}</Link> : body;
 }
 
+
+const ordersLabel = (n: number) => `${n} ${n === 1 ? 'order' : 'orders'}`;
+
 export default function DashboardPage() {
   const { data, error, loading, reload } = useAsync(fetchDashboard, []);
 
@@ -26,9 +29,9 @@ export default function DashboardPage() {
       {data && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <Stat label="Today" value={formatKES(data.today.revenue)} sub={`${data.today.orders} orders`} />
-            <Stat label="This week" value={formatKES(data.week.revenue)} sub={`${data.week.orders} orders`} />
-            <Stat label="This month" value={formatKES(data.month.revenue)} sub={`${data.month.orders} orders`} />
+            <Stat label="Today" value={formatKES(data.today.revenue)} sub={ordersLabel(data.today.orders)} />
+            <Stat label="This week" value={formatKES(data.week.revenue)} sub={ordersLabel(data.week.orders)} />
+            <Stat label="This month" value={formatKES(data.month.revenue)} sub={ordersLabel(data.month.orders)} />
             <Stat label="Pending orders" value={String(data.pendingOrders)} sub={`${data.unpaidOrders} unpaid`} to="/admin/orders?status=pending" />
           </div>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">

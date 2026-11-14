@@ -151,7 +151,8 @@ function RequestDetail({ r, onSaved }: { r: CustomRequestRow; onSaved: () => voi
             {(fid) => (
               <select id={fid} className={inputCls} value={convert.zoneId} onChange={(e) => setConvert((c) => ({ ...c, zoneId: e.target.value }))}>
                 <option value="">Choose…</option>
-                {(zones.data ?? []).map((z) => <option key={z.id} value={z.id}>{z.name} ({formatKES(z.fee)})</option>)}
+                {/* Only zones customers can choose at checkout. */}
+                {(zones.data ?? []).filter((z) => z.is_active).map((z) => <option key={z.id} value={z.id}>{z.name} ({formatKES(z.fee)})</option>)}
               </select>
             )}
           </LabeledField>

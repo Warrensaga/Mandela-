@@ -111,7 +111,9 @@ export default function InventoryPage() {
   const stockFilter = (params.get('stock') as StockFilter | null) ?? 'all';
   const [search, setSearch] = useState('');
   const [showInactive, setShowInactive] = useState(false);
-  const [openRow, setOpenRow] = useState<string | null>(null);
+  // Adjust opens in a dialog: inside the sideways-scrolling table its Save
+  // button ended up off-screen on phones.
+  const [adjustRow, setAdjustRow] = useState<AdminInventoryRow | null>(null);
   const [historyRow, setHistoryRow] = useState<AdminInventoryRow | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const { data, loading, error, reload } = useAsync(listInventory, []);
@@ -206,24 +208,10 @@ export default function InventoryPage() {
                       <StockPill stock={r.stock_quantity ?? 0} threshold={r.low_stock_threshold ?? 5} madeToOrder={r.is_made_to_order ?? false} />
                     </td>
                     <td className="px-3 py-2 text-right align-top">
-                      {openRow === k ? (
-                        <div className="text-left">
-                          <AdjustForm
-                            row={r}
-                            onDone={(newStock) => {
-                              setOverrides((m) => new Map(m).set(k, newStock));
-                              setMessage(`${r.product_name}${r.variant_label ? ` (${r.variant_label})` : ''}: stock is now ${newStock}.`);
-                              setOpenRow(null);
-                            }}
-                          />
-                          <button type="button" className="mt-1 text-xs underline" onClick={() => setOpenRow(null)}>Cancel</button>
-                        </div>
-                      ) : (
-                        <div className="flex justify-end gap-2">
-                          <Btn variant="secondary" onClick={() => setOpenRow(k)}>Adjust</Btn>
-                          <Btn variant="ghost" onClick={() => setHistoryRow(r)}>History</Btn>
-                        </div>
-                      )}
+                      <div className="flex justify-end gap-2">
+                        <Btn variant="secondary" onClick={() => setAdjustRow(r)}>Adjust</Btn>
+                        <Btn variant="ghost" onClick={() => setHistoryRow(r)}>History</Btn>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -232,6 +220,28 @@ export default function InventoryPage() {
           </table>
         </div>
       )}
+
+      <Modal
+        open={adjustRow !== null}
+        onClose={() => setAdjustRow(null)}
+        title={adjustRow ? `Adjust stock: ${adjustRow.product_name}${adjustRow.variant_label ? ` (${adjustRow.variant_label})` : ''}` : ''}
+      >
+        {adjustRow && (
+          <>
+            <p className="mb-3 text-sm text-muted">
+              In stock now: <strong className="text-navy-800">{overrides.get(key(adjustRow)) ?? adjustRow.stock_quantity ?? 0}</strong>
+            </p>
+            <AdjustForm
+              row={adjustRow}
+              onDone={(newStock) => {
+                setOverrides((m) => new Map(m).set(key(adjustRow), newStock));
+                setMessage(`${adjustRow.product_name}${adjustRow.variant_label ? ` (${adjustRow.variant_label})` : ''}: stock is now ${newStock}.`);
+                setAdjustRow(null);
+              }}
+            />
+          </>
+        )}
+      </Modal>
 
       <Modal
         open={historyRow !== null}
