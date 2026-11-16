@@ -11,6 +11,7 @@ interface Form {
   store_name: string;
   whatsapp_number: string;
   deposit_percent: string;
+  order_hold_hours: string;
   contact: { phone: string; email: string; address: string; map_url: string; map_coords: string };
   opening_hours: { days: string; hours: string }[];
   payment: {
@@ -44,6 +45,7 @@ function fromRows(rows: { key: string; value: Json }[]): Form {
     store_name: s(m.get('store_name')),
     whatsapp_number: s(m.get('whatsapp_number')),
     deposit_percent: s(m.get('deposit_percent') ?? 50),
+    order_hold_hours: s(m.get('order_hold_hours') ?? 48),
     contact: { phone: s(contact.phone), email: s(contact.email), address: s(contact.address), map_url: s(contact.map_url), map_coords: s(contact.map_coords) },
     opening_hours: Array.isArray(hours) ? hours.map((h) => ({ days: s(o(h).days), hours: s(o(h).hours) })) : [],
     payment: {
@@ -66,6 +68,7 @@ function validate(f: Form): string[] {
   if (!/^2547\d{8}$|^2541\d{8}$/.test(f.whatsapp_number)) e.push('WhatsApp number must look like 2547XXXXXXXX (no plus sign or spaces).');
   const dep = Number(f.deposit_percent);
   if (!(dep >= 0 && dep <= 100)) e.push('Deposit percent must be between 0 and 100.');
+  if (!/^\d{1,3}$/.test(f.order_hold_hours.trim()) || Number(f.order_hold_hours) > 720) e.push('Hold time must be a whole number of hours from 0 to 720 (0 turns auto-cancel off).');
   if (f.contact.map_url.trim() && !isHttpsUrl(f.contact.map_url.trim())) e.push('Map link must start with https://.');
   if (f.contact.map_coords && !parseCoords(f.contact.map_coords)) e.push('Map coordinates must look like -1.2748849,36.9725608 (latitude,longitude).');
   for (const [name, url] of [['TikTok', f.social.tiktok], ['Instagram', f.social.instagram]] as const) {
@@ -80,6 +83,7 @@ function toValues(f: Form): Record<string, Json> {
     store_name: f.store_name.trim(),
     whatsapp_number: f.whatsapp_number,
     deposit_percent: Number(f.deposit_percent),
+    order_hold_hours: Number(f.order_hold_hours.trim()),
     contact: { phone: f.contact.phone.trim(), email: f.contact.email.trim(), address: f.contact.address.trim(), map_url: f.contact.map_url.trim() || null, map_coords: parseCoords(f.contact.map_coords) },
     opening_hours: f.opening_hours.filter((h) => h.days.trim()).map((h) => ({ days: h.days.trim(), hours: h.hours.trim() })),
     payment_instructions: {
@@ -171,6 +175,9 @@ export default function SettingsPage() {
             {field('Store name', form.store_name, (v) => up({ store_name: v }))}
             {field('WhatsApp number', form.whatsapp_number, (v) => up({ whatsapp_number: v.replace(/\s/g, '') }), { hint: 'Format 2547XXXXXXXX. Orders are sent here.' })}
             {field('Deposit for custom / made-to-order (%)', form.deposit_percent, (v) => up({ deposit_percent: v }))}
+            {field('Hold unconfirmed orders for (hours)', form.order_hold_hours, (v) => up({ order_hold_hours: v.replace(/\D/g, '') }), {
+              hint: 'Orders still pending and unpaid after this are cancelled and their stock released. 0 = never.',
+            })}
           </div>
         </Card>
         <Card title="Payment instructions (manual)">

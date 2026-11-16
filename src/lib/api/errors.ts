@@ -45,6 +45,8 @@ const MESSAGES: Record<string, string> = {
   INVALID_CHANGE: 'Enter a quantity other than zero.',
   INVALID_REASON: 'Choose restock, adjustment or return.',
   ORDER_CANCELLED_FINAL: 'A cancelled order cannot be re-opened. Create a new order instead.',
+  ORDER_FIELDS_LOCKED: "An order's items, customer, delivery zone and totals are fixed once it is placed. Cancel it and place a new order instead.",
+  STOCK_LOCKED: 'Stock changes only through Adjust or Restock on the Inventory page, so every change is logged.',
   CATEGORY_TOO_DEEP: 'Sub-categories cannot have their own sub-categories.',
   CATEGORY_HAS_CHILDREN: 'A category with sub-categories cannot become a sub-category.',
   INVALID_VARIANT_OPTION: 'That variant uses an option value that does not exist.',

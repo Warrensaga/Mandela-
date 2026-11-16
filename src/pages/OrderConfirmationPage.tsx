@@ -46,6 +46,12 @@ export default function OrderConfirmationPage() {
           Your order number is <strong className="text-navy-800">{order.orderNumber}</strong>. Send it to us on WhatsApp and we will
           confirm availability, delivery and payment.
         </p>
+        {settings.orderHoldHours > 0 && (
+          <p className="mx-auto mt-2 max-w-lg text-sm text-muted">
+            We hold your items for {settings.orderHoldHours} hours. If the order is not confirmed or paid by then, it is cancelled
+            automatically.
+          </p>
+        )}
         {settings.whatsappNumber && (
           <ButtonAnchor
             variant="whatsapp"
