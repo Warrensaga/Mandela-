@@ -1,68 +1,87 @@
 # Launch checklist
 
-Status of the pre-launch check on 12 Nov 2026, and what is left before opening to customers.
+Pre-launch review on 16 November 2026, against the live site (mandelafurn.vercel.app) and the live database.
 
-## Verified working
+## Verified working (16 Nov)
 
-- **Customer flow** (tested through the site): add to cart → checkout with delivery zone fee and
-  free-delivery hint → order placed → confirmation page with summary, delivery date and payment
-  instructions → prefilled WhatsApp message with items, totals, address and delivery date → cart cleared.
-  The test order was then removed and its stock restored.
-- **Database** (live smoke test, all rolled back): visitors cannot read or write orders, customers,
-  custom requests, stock history or admin data; only public settings and active products are visible;
-  prices come from the database (a fake client price is ignored); variant products require a variant;
-  over-stock orders are refused; tracking and custom requests work.
-- **Security**: rate limits, upload limits, safe links, security headers (see [security.md](security.md)).
-- **SEO**: titles, descriptions, structured data, robots.txt, sitemaps, product link previews
-  (see [seo.md](seo.md)). Lighthouse: SEO 100, best practices 100, accessibility 96–100.
-- **No broken links** across 67 pages; no broken images; one H1 per page; alt text everywhere.
-- **Mobile**: works at 320–1920px; ~234 KB compressed JavaScript on the home page; admin code is not
-  loaded for shoppers; layout shift 0.03.
+- **Shopper journey on the live site, phone and desktop: 27/27 checks each.** Saved items, variant choice, cart, checkout validation, ordering, confirmation (with the 48-hour hold note), WhatsApp message, order tracking. No console errors.
+- **Custom request** with a photo upload.
+- **Admin, end to end:**
+  - dashboard;
+  - order filters and search, confirming an order, recording a deposit, invoice and packing slip, cancelling;
+  - auto-cancel after 48 hours (run live);
+  - quoting and converting a custom request;
+  - customers;
+  - inventory Adjust and History;
+  - creating a product with opening stock, a photo and variants, and deleting it;
+  - every other admin page loads, and Settings saves.
+- **Security:** visitors cannot read orders, customers, requests, the stock log or admin data. Over the real API, a signed-in admin cannot set stock, write the stock log, change an order total, add order lines or insert orders.
+- **Stock:** all 74 stock levels match the stock log.
+- **Pages:** all 69 storefront pages crawl clean at phone width.
+- **Fixed in this review:**
+  - The page no longer jumps while it loads. The category page's layout shift was 1.07, about four times Google's "poor" line of 0.25; it is now 0.
+  - On phones, the shop search box gets its own row; it was squeezed to show only "S".
+- **Test data:** removed. The next order number is **MH-000063**.
 
-## Must do before launch (owner)
+## Blockers: do not launch until these are done
 
-1. **Deploy the latest code.** Commit and push to GitHub so Vercel builds it. Until then the live site
-   runs the older version without today's security and SEO work.
-2. **Vercel → Settings → Environment Variables** (Production): `VITE_SUPABASE_URL`,
-   `VITE_SUPABASE_ANON_KEY`, `VITE_WHATSAPP_NUMBER`, and `VITE_SITE_URL` = your live domain
-   (e.g. `https://mandelaheritage.co.ke`). Redeploy after adding them.
-3. **Custom domain**: Vercel → Settings → Domains. Point your domain's DNS as Vercel shows.
-4. **Supabase → Authentication → URL Configuration**: Site URL = your live domain; Redirect URLs =
-   `https://<your-domain>/**` and `https://mandelafurn.vercel.app/**` (keep `http://localhost:5173/**` for
-   development). The admin "Forgot password" email links to `/admin/reset-password`; if that address is
-   not allowed here, Supabase sends people to the Site URL instead and the reset cannot be finished.
-   Test it once: sign-in page → enter your email → Forgot password → open the email → set a new password.
-5. **Supabase Auth settings** in [security.md](security.md): confirm email on, password length 10,
-   leaked-password protection (paid plans).
-6. **Admin → Settings**:
-   - **Payment details**: M-Pesa Paybill or Till and/or bank details. Without them, customers are told
-     "We will send payment details with your WhatsApp confirmation".
-   - **Contact email**: the placeholder `hello@example.com` was removed; add your real address.
-   - Check phone, WhatsApp number, address, opening hours and announcement bar.
-7. **Replace the demo catalogue**: add your real products (Admin → Products → New product), then delete
-   the demo ones (tick them on the Products list → Delete selected). Replace the four hero slides
-   (they use stock photos) under Admin → Hero carousel.
-8. **Delete test orders**: order MH-000019 (pending) looks like a test; delete it under Admin → Orders
-   if so. Order numbers continue from the last one used (the next will be MH-000035); ask if you want
-   the numbering restarted.
-9. **Projects**: Admin → Projects. Add homes, offices and rentals you have furnished, with your own photos (ask clients first). Publish at least one and it also appears on the home page.
-10. **Reviews**: Admin → Reviews. Paste the link to your Google reviews, your overall rating and count, and copy in your best real reviews exactly as written. They replace the delivery/payment block on the home page.
-11. **Delivery zones**: confirm the four zones, fees and days match what you actually charge.
+These are the client's and owner's to do. None of them needs code.
 
-## Missing pages (needed before or soon after launch)
+1. **Replace the demo catalogue.** All 17 active products (Amani Sofa, Kito Coffee Table and the rest) are invented placeholders, with made-up prices and stock. Every product photo comes from Unsplash or placehold.co.
+   - Customers could order furniture that does not exist.
+   - Add the real products with the client's own photos: Admin → Products → New product.
+   - Then delete the demo ones, and the inactive "Draft Bar Stool": tick them on the Products list → Delete selected.
+2. **Replace the four hero slides.** All use Unsplash stock photos. Use the client's own photos: Admin → Hero carousel.
+3. **Payment details.** Paybill, Till and bank details are all blank, so the confirmation page has no way to pay. Admin → Settings → Payment instructions.
+4. **Contact email** is blank. Admin → Settings → Contact.
+5. **Hosting plans** (the plans that run the live site and its database are free tiers):
+   - **Vercel Hobby (free) is for personal, non-commercial use.** A shop that takes orders needs **Vercel Pro**.
+   - **Supabase Free:**
+     - no automatic backups;
+     - the project is **paused after a week without activity**;
+     - leaked-password protection is unavailable.
 
-CLAUDE.md lists these; they need your own content, so they were not invented:
+     Upgrade to **Supabase Pro** before taking real orders. It is billed through Vercel, because the project was created from Vercel.
+6. **Email for admin sign-in.** Supabase's built-in email is heavily rate-limited and only meant for testing; it may only deliver to the project's own team members. "Forgot password" and staff sign-up confirmations need a real sender:
+   - Supabase → Authentication → Emails → SMTP settings;
+   - use any email provider, ideally an address on the new domain.
+7. **Privacy notice.** Checkout collects names, phone numbers and addresses, and Kenya's Data Protection Act 2019 expects customers to be told how that data is used. The site has no privacy page yet: needs the owner's details, and approval to add the page.
+8. **Returns & Warranty page.** Required by the project brief and not built yet: needs the owner's actual policy.
 
-- **Returns & Warranty**: your actual return window, conditions and warranty terms.
-- **About**: your workshop story, how long you have been making furniture, where.
-- **Guides** (care and buying guides): the admin can already create guides, but the public guide
-  pages are not built yet (Phase 4).
+## Domain switch (after buying the domain)
+
+1. **Vercel → Project → Settings → Domains:** add `yourdomain.co.ke` and `www.yourdomain.co.ke`, and set the DNS records Vercel shows at the registrar. Make one of them the main address; Vercel redirects the other. Optionally redirect `mandelafurn.vercel.app` to it as well.
+2. **Vercel → Settings → Environment Variables (Production):** set `VITE_SITE_URL` to `https://yourdomain.co.ke` with no trailing slash, then **redeploy**. Canonical links, the sitemap, robots.txt and WhatsApp/Facebook link previews all come from this one value.
+3. **Supabase → Authentication → URL Configuration:**
+   - **Site URL:** the new domain.
+   - **Redirect URLs:** `https://yourdomain.co.ke/**`, the www version if used, `https://mandelafurn.vercel.app/**` and `http://localhost:5173/**`.
+   - Test "Forgot password" once, end to end.
+4. **Supabase → Authentication:** turn on leaked-password protection (once on Pro).
+5. **After the switch, check:**
+   - the site loads on both addresses, with the padlock;
+   - `https://yourdomain.co.ke/robots.txt` names the new sitemap;
+   - a product link pasted into WhatsApp shows its photo and price;
+   - one real test order works, then delete it under Admin → Orders.
+
+## Should do before or soon after launch
+
+- **Mobile speed.** Measured on the live site under phone conditions (4× slower processor, mobile data):
+  - home: about 5 s until the main content shows, and 0.8 s of the page being too busy to respond;
+  - product pages: about 5–10 s until the main content shows.
+
+  The project target is Lighthouse mobile 90+, which this is not yet. Much of it is the large Unsplash photos. Photos uploaded through the admin are resized to WebP at 400/800/1200 px, so re-measure on pagespeed.web.dev once the real photos are in. A code speed pass (smaller start-up JavaScript, preloading the first hero image) may still be needed after that.
+- **Reviews:** confirm the published review ("Martha") is a real Google review copied exactly. Add the review count shown on Google: Admin → Reviews.
+- **Delivery zones:** confirm the four zones, fees and days match what is actually charged. The announcement says free delivery within Nairobi over KES 100,000; make sure the zones agree.
+- **Two customers with no orders** (from earlier testing): delete them in the database if they are not real.
+- **Stock history:** the log still contains entries from earlier test orders, which balance out to zero. Ask if you want it reset to a single "Opening stock" entry per item before launch.
+- **Admin sign-in security:** two-step sign-in for admin accounts, see [production-audit.md](production-audit.md) item B1.
+- **Projects and Guides:** add at least one furnished project with the client's own photos. The public Guides pages and the About page are not built yet.
 
 ## After launch
 
-- Submit `https://<your-domain>/sitemap.xml` to Google Search Console and Bing Webmaster Tools.
-- Claim your Google Business Profile with the same name, phone and address.
-- Run PageSpeed Insights (pagespeed.web.dev) on the live home and a product page (mobile).
-  Lighthouse could not record a performance trace on this computer.
-- Paste a product link into the Facebook Sharing Debugger to confirm the product preview.
-- Redeploy after adding many products so the sitemap updates.
+- Submit `https://yourdomain.co.ke/sitemap.xml` to Google Search Console and Bing Webmaster Tools.
+- Claim the Google Business Profile with the same name, phone and address as the site.
+- Run pagespeed.web.dev on the home page and a product page (mobile).
+- Paste a product link into the Facebook Sharing Debugger to confirm the preview.
+- Redeploy after adding many products, so the sitemap updates.
+- The remaining audit items, in [production-audit.md](production-audit.md): payment ledger, change history, error monitoring, analytics.

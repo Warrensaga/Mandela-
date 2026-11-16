@@ -105,8 +105,9 @@ export function ShopView({ categorySlug, chips }: ShopViewProps) {
           >
             {chips ?? defaultChips}
           </nav>
-          <div className="flex shrink-0 items-center gap-2 lg:ml-auto">
-            <form role="search" onSubmit={(e) => e.preventDefault()} className="relative min-w-0 flex-1 lg:w-52 lg:flex-none">
+          <div className="flex shrink-0 flex-wrap items-center gap-2 sm:flex-nowrap lg:ml-auto">
+            {/* Phones: search gets its own full-width row; sort and Refine share the next. */}
+            <form role="search" onSubmit={(e) => e.preventDefault()} className="relative min-w-0 basis-full sm:basis-auto sm:flex-1 lg:w-52 lg:flex-none">
               <label htmlFor="shop-search" className="sr-only">Search products</label>
               <input
                 id="shop-search"
@@ -123,7 +124,7 @@ export function ShopView({ categorySlug, chips }: ShopViewProps) {
               id="shop-sort"
               value={filters.sort}
               onChange={(e) => update({ sort: e.target.value as SortKey })}
-              className="h-10 border border-paper-300 bg-paper-50 px-3 text-sm text-ink focus:border-brand-600 focus:outline-none"
+              className="h-10 min-w-0 flex-1 border border-paper-300 bg-paper-50 px-3 text-sm text-ink focus:border-brand-600 focus:outline-none sm:flex-none"
             >
               {Object.entries(SORT_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>

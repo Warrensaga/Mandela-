@@ -11,7 +11,9 @@ const linkStyle = 'underline decoration-white/40 underline-offset-4 transition-c
  * Below desktop width only the announcement shows (or the number when there is none).
  */
 export function AnnouncementBar() {
-  const { settings } = useSite();
+  const { settings, ready } = useSite();
+  // Hold the strip's height while settings load, so the page does not jump down when it appears.
+  if (!ready) return <div className="min-h-9 bg-logo-600" aria-hidden="true" />;
   const a = settings.announcement;
   const phone = settings.contact.phone || (settings.whatsappNumber ? `+${settings.whatsappNumber}` : '');
   const showAnnouncement = a.enabled && Boolean(a.text);
