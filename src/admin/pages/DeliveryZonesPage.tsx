@@ -80,7 +80,10 @@ export default function DeliveryZonesPage() {
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-navy-800">{z.name}</p>
                   <p className="text-xs text-muted">
-                    {formatKES(z.fee)} · {z.estimated_days_min}–{z.estimated_days_max} days
+                    {formatKES(z.fee)} ·{' '}
+                    {z.estimated_days_min === z.estimated_days_max
+                      ? `${z.estimated_days_max} ${z.estimated_days_max === 1 ? 'day' : 'days'}`
+                      : `${z.estimated_days_min}–${z.estimated_days_max} days`}
                     {z.free_delivery_threshold ? ` · free over ${formatKES(z.free_delivery_threshold)}` : ''}
                   </p>
                 </div>
