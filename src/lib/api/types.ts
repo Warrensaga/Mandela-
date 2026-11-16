@@ -113,6 +113,8 @@ export interface SiteSettings {
   storeName: string;
   whatsappNumber: string;
   depositPercent: number;
+  /** Hours an unconfirmed, unpaid order holds its stock before it is cancelled automatically. 0 = never. */
+  orderHoldHours: number;
   contact: { phone: string; email: string; address: string; mapUrl: string | null; mapCoords: string | null };
   openingHours: { days: string; hours: string }[];
   payment: {

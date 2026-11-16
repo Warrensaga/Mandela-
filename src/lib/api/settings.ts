@@ -28,6 +28,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   storeName: 'Mandela Heritage Furniture',
   whatsappNumber: env.whatsappNumber,
   depositPercent: 50,
+  orderHoldHours: 48,
   contact: { phone: '', email: '', address: '', mapUrl: null, mapCoords: null },
   openingHours: [],
   payment: {
@@ -59,11 +60,13 @@ export async function fetchSettings(): Promise<SiteSettings> {
   const httpsUrl = (v: unknown) => (typeof v === 'string' && isHttpsUrl(v.trim()) ? v.trim() : '');
   const hours = map.get('opening_hours');
   const deposit = Number(map.get('deposit_percent'));
+  const hold = Number(map.get('order_hold_hours') ?? 48);
 
   return {
     storeName: str(map.get('store_name'), DEFAULT_SETTINGS.storeName),
     whatsappNumber: str(map.get('whatsapp_number')).replace(/\D/g, '') || env.whatsappNumber,
     depositPercent: Number.isFinite(deposit) ? deposit : 50,
+    orderHoldHours: Number.isFinite(hold) && hold >= 0 ? Math.min(hold, 720) : 48,
     contact: {
       phone: str(contact.phone),
       email: str(contact.email),

@@ -10,6 +10,18 @@ import { whatsappLink } from '../../lib/whatsapp';
 import { useAdmin } from '../auth';
 import { confirmDeleteOrder } from '../confirmDeleteOrder';
 import { Btn, Card, inputCls, LabeledField, Loading, Notice, PageHeader, StatusBadge } from '../components/ui';
+import { useSite } from '../../state/site';
+
+/** When an unconfirmed order is auto-cancelled (checked every 15 minutes), in Nairobi time. */
+const holdEnds = (createdAt: string, hours: number) =>
+  new Date(new Date(createdAt).getTime() + hours * 3_600_000).toLocaleString('en-KE', {
+    timeZone: 'Africa/Nairobi',
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
 const STATUS_MESSAGES: Partial<Record<OrderStatus, string>> = {
   confirmed: 'your order is confirmed',
@@ -22,6 +34,7 @@ const STATUS_MESSAGES: Partial<Record<OrderStatus, string>> = {
 export default function OrderDetailPage() {
   const { id = '' } = useParams();
   const { data, loading, error, reload } = useAsync(() => getOrder(id), [id]);
+  const { settings } = useSite();
   const [status, setStatus] = useState<OrderStatus>('pending');
   const [payment, setPayment] = useState<PaymentStatus>('unpaid');
   const [method, setMethod] = useState('');
@@ -160,6 +173,12 @@ export default function OrderDetailPage() {
         <div className="space-y-6">
           <Card title="Status and payment">
             <div className="mb-3 flex gap-2"><StatusBadge value={order.status} /><StatusBadge value={order.payment_status} /></div>
+            {order.status === 'pending' && order.payment_status === 'unpaid' && settings.orderHoldHours > 0 && (
+              <p className="mb-3 text-xs text-muted">
+                Cancels automatically on {holdEnds(order.created_at, settings.orderHoldHours)} unless you confirm it or record a payment.
+                Its stock then goes back to inventory.
+              </p>
+            )}
             <div className="space-y-3">
               <LabeledField label="Order status" hint={cancelled ? 'Cancelled orders are final.' : 'Cancelling returns stock to inventory.'}>
                 {(fid) => (
