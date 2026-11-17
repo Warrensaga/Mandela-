@@ -42,8 +42,9 @@ export function storeLd(settings: SiteSettings) {
     '@id': `${base}/#store`,
     name: settings.storeName,
     url: `${base}/`,
-    logo: `${base}/logo.png`,
-    image: `${base}/logo.png`,
+    // Google's logo feature needs a square-friendly image of at least 112x112.
+    logo: { '@type': 'ImageObject', url: `${base}/icon-512.png`, width: 512, height: 512 },
+    image: `${base}/icon-512.png`,
     description: SEO_DEFAULT_DESCRIPTION,
     telephone: settings.contact.phone || undefined,
     email: settings.contact.email || undefined,
@@ -76,6 +77,8 @@ export function websiteLd(settings: SiteSettings) {
     '@type': 'WebSite',
     '@id': `${base}/#website`,
     name: settings.storeName,
+    // The name as written on the logo and in the domain, so Google matches both.
+    alternateName: 'Mandela Heritage Furnitures',
     url: `${base}/`,
     inLanguage: 'en-KE',
     publisher: { '@id': `${base}/#store` },
