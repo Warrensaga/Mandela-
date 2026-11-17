@@ -1,4 +1,18 @@
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.mandelaheritagefurnitures.co.ke" }],
+      "destination": "https://mandelaheritagefurnitures.co.ke/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "mandelafurn.vercel.app" }],
+      "destination": "https://mandelaheritagefurnitures.co.ke/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
     {

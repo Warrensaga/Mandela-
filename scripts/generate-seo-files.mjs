@@ -1,14 +1,11 @@
 // Generates robots.txt and XML sitemaps into dist/ after `vite build`.
 //
-// Layout follows what the leading furniture stores use (Yoast/WooCommerce and
-// Shopify): a sitemap index that points to one sitemap per content type, each
-// URL with <lastmod>, and product URLs carrying their photos (<image:image>).
-//
-//   /sitemap.xml             index
-//   /sitemap-pages.xml       home, shop, help pages
-//   /sitemap-categories.xml  categories that have at least one active product
-//   /sitemap-products.xml    active products + their images
-//   /sitemap-projects.xml    published furnishing projects + their photos
+// /sitemap.xml lists every indexable page in one file, in this order:
+//   main pages (home, shop, help pages), categories that have at least one
+//   active product, active products with their photos (<image:image>), and
+//   published furnishing projects with their photos.
+// Each URL carries a real <lastmod> where one exists, as the leading furniture
+// stores' sitemaps do.
 //
 // Data comes from Supabase with the public anon key, so only what visitors can
 // already see is listed. The sitemap is rebuilt on every deploy: redeploy on
@@ -75,13 +72,6 @@ function urlset(entries, withImages = false) {
     })
     .join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"${ns}>\n${body}\n</urlset>\n`;
-}
-
-function sitemapIndex(site, files) {
-  const body = files
-    .map((f) => `  <sitemap>\n    <loc>${xmlEscape(`${site}/${f.name}`)}</loc>${f.lastmod ? `\n    <lastmod>${f.lastmod}</lastmod>` : ''}\n  </sitemap>`)
-    .join('\n');
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</sitemapindex>\n`;
 }
 
 function robots(site) {
@@ -199,48 +189,39 @@ async function main() {
   const latestProduct = products.reduce((m, p) => (p.updated_at > m ? p.updated_at : m), '');
 
   const latestProject = projects.reduce((m, p) => (p.updated_at > m ? p.updated_at : m), '');
-  const files = [];
   // Only real change dates: Google stops trusting <lastmod> when it is always
   // "now", so help pages (contact, FAQ, delivery...) carry none.
   const pages = STATIC_PAGES.map((path) => ({
     loc: `${site}${path}`,
     lastmod: CATALOGUE_PAGES.has(path) ? isoDate(latestProduct) : path === '/projects' ? isoDate(latestProject) : null,
   }));
-  writeFileSync(resolve(DIST, 'sitemap-pages.xml'), urlset(pages));
-  files.push({ name: 'sitemap-pages.xml', lastmod: isoDate(latest(latestProduct, latestProject)) });
 
   // Only categories with products: empty category pages are thin content.
-  const cats = categories
-    .filter((c) => latestByCategory.has(c.id))
-    .map((c) => ({ loc: `${site}/category/${encodeURIComponent(c.slug)}`, lastmod: isoDate(latestByCategory.get(c.id)) }));
-  if (cats.length) {
-    writeFileSync(resolve(DIST, 'sitemap-categories.xml'), urlset(cats));
-    files.push({ name: 'sitemap-categories.xml', lastmod: isoDate(latestProduct) });
-  }
+  // Top-level categories first, each followed by its sub-categories.
+  const withProducts = categories.filter((c) => latestByCategory.has(c.id));
+  const ordered = withProducts
+    .filter((c) => !c.parent_id)
+    .flatMap((top) => [top, ...withProducts.filter((c) => c.parent_id === top.id)]);
+  const cats = ordered.map((c) => ({ loc: `${site}/category/${encodeURIComponent(c.slug)}`, lastmod: isoDate(latestByCategory.get(c.id)) }));
 
   const prods = products.map((p) => ({
     loc: `${site}/product/${encodeURIComponent(p.slug)}`,
     lastmod: isoDate(p.updated_at),
     images: (imagesByProduct.get(p.id) ?? []).slice(0, 10),
   }));
-  if (prods.length) {
-    writeFileSync(resolve(DIST, 'sitemap-products.xml'), urlset(prods, true));
-    files.push({ name: 'sitemap-products.xml', lastmod: isoDate(latestProduct) });
-  }
 
   const projs = projects.map((p) => ({
     loc: `${site}/projects/${encodeURIComponent(p.slug)}`,
     lastmod: isoDate(p.updated_at),
     images: [...new Set([p.cover_image_url, ...(p.gallery ?? [])].filter(Boolean).map(abs))].slice(0, 10),
   }));
-  if (projs.length) {
-    writeFileSync(resolve(DIST, 'sitemap-projects.xml'), urlset(projs, true));
-    files.push({ name: 'sitemap-projects.xml', lastmod: isoDate(latestProject) });
-  }
 
-  writeFileSync(resolve(DIST, 'sitemap.xml'), sitemapIndex(site, files));
+  // One sitemap.xml listing every indexable page (Google's limit is 50,000
+  // URLs per file; split into a sitemap index only if the catalogue nears that).
+  const all = [...pages, ...cats, ...prods, ...projs];
+  writeFileSync(resolve(DIST, 'sitemap.xml'), urlset(all, true));
   writeFileSync(resolve(DIST, 'robots.txt'), robots(site));
-  console.log(`[seo] ${site}: sitemap.xml with ${pages.length} pages, ${cats.length} categories, ${prods.length} products, ${projs.length} projects; robots.txt written.`);
+  console.log(`[seo] ${site}: sitemap.xml lists ${all.length} pages (${pages.length} main, ${cats.length} categories, ${prods.length} products, ${projs.length} projects); robots.txt written.`);
 }
 
 main().catch((err) => {
