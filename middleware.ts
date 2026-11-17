@@ -152,8 +152,10 @@ export default async function middleware(request: Request): Promise<Response | u
   const slug = m?.[2] ? decodeURIComponent(m[2]) : '';
   if (!m || !SLUG.test(slug)) return undefined;
 
+  // Same rule as the build (vite.config.ts): VITE_SITE_URL, else the production domain.
   const siteEnv = (process.env.VITE_SITE_URL ?? '').trim().replace(/\/+$/, '');
-  const site = /^https:\/\/[^/\s]+$/.test(siteEnv) ? siteEnv : url.origin;
+  const production = process.env.VERCEL_ENV === 'production' ? process.env.VERCEL_PROJECT_PRODUCTION_URL : '';
+  const site = /^https:\/\/[^/\s]+$/.test(siteEnv) ? siteEnv : production ? `https://${production}` : url.origin;
   const store = 'Mandela Heritage Furniture';
 
   try {

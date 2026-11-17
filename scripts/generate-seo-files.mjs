@@ -41,7 +41,7 @@ const env = loadEnvFiles();
 function resolveSiteUrl() {
   const candidates = [
     env.VITE_SITE_URL,
-    env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}` : '',
+    env.VERCEL_ENV === 'production' && env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}` : '',
   ];
   for (const c of candidates) {
     const v = (c || '').trim().replace(/\/+$/, '');

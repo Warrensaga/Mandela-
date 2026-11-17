@@ -4,6 +4,20 @@ import tailwindcss from '@tailwindcss/vite';
 import vercelConfig from './vercel.json';
 import { CATEGORY_KEYWORDS } from './src/lib/seoKeywords';
 
+// Node's process.env (this project does not install @types/node).
+declare const process: { env: Record<string, string | undefined> };
+
+// Canonical links, the sitemap and link previews all use VITE_SITE_URL. If it
+// is missing or not a plain https://domain value, production builds on Vercel
+// fall back to the project's production domain, so every address (www, bare,
+// *.vercel.app) still points search engines at one site. Set before Vite reads
+// the environment, so import.meta.env.VITE_SITE_URL sees the same value.
+{
+  const configured = (process.env.VITE_SITE_URL ?? '').trim().replace(/\/+$/, '');
+  const production = process.env.VERCEL_ENV === 'production' ? process.env.VERCEL_PROJECT_PRODUCTION_URL : '';
+  if (!/^https:\/\/[^/\s]+$/.test(configured) && production) process.env.VITE_SITE_URL = `https://${production}`;
+}
+
 // `npm run preview` serves the production build with the same security headers
 // (CSP and friends) that Vercel sends, so a CSP problem shows up locally first.
 const vercel: { headers: { source: string; headers: { key: string; value: string }[] }[] } = vercelConfig;
