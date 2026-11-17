@@ -8,7 +8,7 @@ From their live `robots.txt` and sitemap files: Fairdeal, Victoria Homestore, Fu
 
 | Practice | Who does it | Mandela Heritage |
 |---|---|---|
-| A sitemap index pointing to one sitemap per page type (pages, categories, products, blog) | Fairdeal, Victoria (Yoast), MoKo (Shopify), Hotpoint | Yes: pages, categories, products and projects |
+| Every page to index listed in the sitemap. Large stores split it into one file per page type. | Fairdeal, Victoria (Yoast), MoKo (Shopify), Hotpoint | Yes, in a single `sitemap.xml`. Under 50,000 pages (Google's per-file limit), one file is simpler and easier to check, and works just as well |
 | A real last-updated date on every link | All of them | Yes. As of today, it also counts variant and photo changes, and help pages no longer claim "updated now" on every deploy |
 | Product photos listed in the product sitemap (`<image:image>`), so pieces appear in Google Images | Fairdeal, Victoria | Yes: up to 10 photos per product and project |
 | Block cart, checkout, account and wishlist pages | Victoria, Hotpoint, Fairdeal | Yes: `/cart`, `/checkout`, `/order/`, `/admin`, and `/saved` as of today |
@@ -57,14 +57,20 @@ The real file has one rule per line; pairs are shown side by side here to save s
 
 ## Pages Google will index (49 today)
 
-**Sitemap index:** `https://mandelaheritagefurnitures.co.ke/sitemap.xml`. It points to:
+**`https://mandelaheritagefurnitures.co.ke/sitemap.xml` lists every page, in this order:**
 
-- **sitemap-pages.xml (10):** `/`, `/shop`, `/categories`, `/projects`, `/custom-request`, `/contact`, `/delivery`, `/payment`, `/faq`, `/track-order`.
-- **sitemap-categories.xml (22):** only categories that have at least one active product. Empty category pages would count as thin content.
-  - Top-level categories: living-room, dining, bedroom, mattresses-and-bedding, office, outdoor-and-garden, home-decor.
-  - Sub-categories: sofas, armchairs, coffee-tables, dining-sets, dining-chairs, sideboards, beds-and-bed-frames, wardrobes, bedside-tables, office-desks, office-chairs, patio-sets, loungers, rugs, mirrors.
-- **sitemap-products.xml (17 products, 28 photos):** every active product.
-- **sitemap-projects.xml:** appears automatically once a project is published.
+- **Main pages (10):** `/`, `/shop`, `/categories`, `/projects`, `/custom-request`, `/contact`, `/delivery`, `/payment`, `/faq`, `/track-order`.
+- **Categories (22):** only categories that have at least one active product, because empty category pages count as thin content. Each top-level category is followed by its sub-categories:
+  - living-room: sofas, armchairs, coffee-tables;
+  - dining: dining-sets, dining-chairs, sideboards;
+  - bedroom: beds-and-bed-frames, wardrobes, bedside-tables;
+  - mattresses-and-bedding;
+  - office: office-desks, office-chairs;
+  - outdoor-and-garden: patio-sets, loungers;
+  - home-decor: rugs, mirrors.
+- **Products (17, with 28 photos):** every active product.
+- **Projects:** added automatically once a project is published.
+- **Later additions:** a new product, a category's first product, or a newly published project is added on the next deploy. Deactivated or deleted items drop out.
 
 Every indexed page has its own title, description and canonical link, plus structured data:
 - **Products** carry price, stock, brand and delivery details, with variants grouped together (Product / ProductGroup).
@@ -85,7 +91,7 @@ Every indexed page has its own title, description and canonical link, plus struc
 
 ## Before submitting (important)
 
-1. **Redirects in Vercel → Settings → Domains.** Set both `www.mandelaheritagefurnitures.co.ke` and `mandelafurn.vercel.app` to **redirect (308)** to `mandelaheritagefurnitures.co.ke`. On 17 Nov all three addresses still showed the site separately.
+1. **Redirects:** these are now in `vercel.json`, so they do not depend on the dashboard. `www.mandelaheritagefurnitures.co.ke` and `mandelafurn.vercel.app` both send visitors permanently (308) to the same page on `mandelaheritagefurnitures.co.ke`, and `http://` already redirects to `https://`.
 2. **Hide the placeholder products first.** The 17 products above are invented demo items with stock photos. Once Google indexes them, they can stay in search results for weeks after deletion. Either:
    - add the real products, or
    - at least untick **Active** on the demo products,
