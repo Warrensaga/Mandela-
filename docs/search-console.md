@@ -111,6 +111,31 @@ The sitemap is not uploaded as a file. Google is told its address and fetches it
 6. **Bing Webmaster Tools** ([bing.com/webmasters](https://www.bing.com/webmasters)): choose **Import from Google Search Console**. This also feeds DuckDuckGo and many AI search tools.
 7. **Google Business Profile** ([business.google.com](https://business.google.com)): use the exact name, phone (+254 701 333 358) and Eastern Bypass address shown on the site. Set the website to `https://mandelaheritagefurnitures.co.ke`. This is what makes the shop appear with a map and photos when someone searches the business name.
 
+## Links to request indexing for first
+
+Search Console → **URL inspection** → paste each link → **Request indexing**. Google allows roughly 10 requests a day; the sitemap covers the rest.
+
+1. https://mandelaheritagefurnitures.co.ke/
+2. https://mandelaheritagefurnitures.co.ke/shop
+3. https://mandelaheritagefurnitures.co.ke/categories
+4. https://mandelaheritagefurnitures.co.ke/category/living-room
+5. https://mandelaheritagefurnitures.co.ke/category/bedroom
+6. https://mandelaheritagefurnitures.co.ke/category/dining
+7. https://mandelaheritagefurnitures.co.ke/category/sofas
+8. https://mandelaheritagefurnitures.co.ke/custom-request
+9. https://mandelaheritagefurnitures.co.ke/contact
+10. https://mandelaheritagefurnitures.co.ke/projects
+
+Request products only once the real ones are in. The demo product links (`/product/amani-sofa` and so on) will disappear when those products are deleted.
+
+## Logo in Google results
+
+- **Favicon:** Google shows it next to the site name in results. The site serves square icons made from the logo: `/favicon.ico` (48×48), `/icon-192.png`, `/icon-512.png` and `/apple-touch-icon.png`, plus `/site.webmanifest`. Google needs a square image of at least 48×48; the old 149×93 `logo.png` did not qualify.
+- **Business logo:** the home and contact pages' structured data names `/icon-512.png` as the logo, which meets Google's 112×112 minimum. Their site-name data gives "Mandela Heritage Furniture", with "Mandela Heritage Furnitures" as an alternative.
+- **Google Business Profile:** upload the logo there too. For a local shop, that is where the logo shows most: beside the map and on the business panel.
+- **Timing:** Google updates favicons and logos on its own schedule, usually days to a few weeks after it crawls the home page. Requesting indexing for the home page speeds this up.
+- **Sharper icons:** the only logo file is 149×93 pixels, and its left edge, the emblem, is cut off. The large icons are therefore slightly soft. With the original logo file (ideally 1000 px or more, or an SVG, and the emblem on its own), the icons can be made again from it.
+
 ## What to expect
 
 - **Business name searches:** usually within a few days to two weeks of submitting.
