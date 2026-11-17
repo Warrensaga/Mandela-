@@ -94,6 +94,7 @@ Disallow: /admin
 Disallow: /cart
 Disallow: /checkout
 Disallow: /order/
+Disallow: /saved
 
 # Filter, sort and search URLs repeat the shop and category pages (crawl traps)
 Disallow: /*?q=
@@ -132,6 +133,11 @@ ${site ? `\nSitemap: ${site}/sitemap.xml\n` : ''}`;
 
 /** Static pages, highest value first. */
 const STATIC_PAGES = ['/', '/shop', '/categories', '/projects', '/custom-request', '/contact', '/delivery', '/payment', '/faq', '/track-order'];
+/** Pages whose content follows the catalogue; their lastmod is the latest product change. */
+const CATALOGUE_PAGES = new Set(['/', '/shop', '/categories']);
+
+/** Latest of several ISO timestamps (ignores empty values). */
+const latest = (...dates) => dates.filter(Boolean).reduce((m, d) => (d > m ? d : m), '') || null;
 
 async function main() {
   if (!existsSync(DIST)) throw new Error('dist/ not found: run vite build first');
@@ -152,13 +158,22 @@ async function main() {
   let categories = [];
   let products = [];
   let images = [];
+  let variants = [];
   let projects = [];
   try {
-    [categories, products, images] = await Promise.all([
+    [categories, products, images, variants] = await Promise.all([
       fetchTable('categories?select=id,parent_id,slug&is_active=eq.true&order=sort_order'),
       fetchTable('products?select=id,slug,category_id,updated_at&is_active=eq.true&order=created_at.desc'),
-      fetchTable('product_images?select=product_id,url,sort_order&order=sort_order'),
+      fetchTable('product_images?select=product_id,url,sort_order,created_at&order=sort_order'),
+      fetchTable('product_variants?select=product_id,updated_at'),
     ]);
+    // A product page changes when its variants (price, stock) or photos change,
+    // not only when the product row is edited: use the latest of the three.
+    const touched = new Map();
+    for (const r of [...variants.map((v) => [v.product_id, v.updated_at]), ...images.map((i) => [i.product_id, i.created_at])]) {
+      touched.set(r[0], latest(touched.get(r[0]), r[1]));
+    }
+    products = products.map((p) => ({ ...p, updated_at: latest(p.updated_at, touched.get(p.id)) }));
     // Separate request: a missing projects table must not hide the catalogue.
     projects = await fetchTable('projects?select=slug,updated_at,cover_image_url,gallery&is_published=eq.true&order=sort_order').catch(() => []);
   } catch (err) {
@@ -183,13 +198,16 @@ async function main() {
   }
   const latestProduct = products.reduce((m, p) => (p.updated_at > m ? p.updated_at : m), '');
 
+  const latestProject = projects.reduce((m, p) => (p.updated_at > m ? p.updated_at : m), '');
   const files = [];
+  // Only real change dates: Google stops trusting <lastmod> when it is always
+  // "now", so help pages (contact, FAQ, delivery...) carry none.
   const pages = STATIC_PAGES.map((path) => ({
     loc: `${site}${path}`,
-    lastmod: path === '/' || path === '/shop' || path === '/categories' ? isoDate(latestProduct) ?? now : now,
+    lastmod: CATALOGUE_PAGES.has(path) ? isoDate(latestProduct) : path === '/projects' ? isoDate(latestProject) : null,
   }));
   writeFileSync(resolve(DIST, 'sitemap-pages.xml'), urlset(pages));
-  files.push({ name: 'sitemap-pages.xml', lastmod: now });
+  files.push({ name: 'sitemap-pages.xml', lastmod: isoDate(latest(latestProduct, latestProject)) });
 
   // Only categories with products: empty category pages are thin content.
   const cats = categories
@@ -217,7 +235,7 @@ async function main() {
   }));
   if (projs.length) {
     writeFileSync(resolve(DIST, 'sitemap-projects.xml'), urlset(projs, true));
-    files.push({ name: 'sitemap-projects.xml', lastmod: isoDate(projects.reduce((m, p) => (p.updated_at > m ? p.updated_at : m), '')) });
+    files.push({ name: 'sitemap-projects.xml', lastmod: isoDate(latestProject) });
   }
 
   writeFileSync(resolve(DIST, 'sitemap.xml'), sitemapIndex(site, files));
