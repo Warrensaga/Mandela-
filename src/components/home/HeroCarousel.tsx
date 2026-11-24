@@ -42,6 +42,29 @@ function Headline({ text }: { text: string }) {
   );
 }
 
+/**
+ * Makes the whole slide a link to the slide's button target. Hidden from screen
+ * readers and the tab order, since the button already offers the same link.
+ * A swipe must not count as a click, so clicks right after a drag are ignored.
+ */
+function SlideLink({ slide, dragged }: { slide: HeroSlide; dragged: { current: boolean } }) {
+  if (!slide.ctaUrl) return null;
+  const props = {
+    'aria-hidden': true,
+    tabIndex: -1,
+    className: 'absolute inset-0 z-[1] cursor-pointer',
+    draggable: false,
+    onPointerDown: () => {
+      dragged.current = false;
+    },
+    onClick: (e: { preventDefault: () => void }) => {
+      if (dragged.current) e.preventDefault();
+      dragged.current = false;
+    },
+  };
+  return slide.ctaUrl.startsWith('/') ? <Link to={slide.ctaUrl} {...props} /> : <a href={slide.ctaUrl} rel="noopener" {...props} />;
+}
+
 const pad = (n: number) => String(n).padStart(2, '0');
 
 function SlideImage({ slide, eager }: { slide: HeroSlide; eager: boolean }) {
@@ -80,6 +103,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [tabHidden, setTabHidden] = useState(false);
   const [userPaused, setUserPaused] = useState(Boolean(reduce));
   const touchTimer = useRef<number | undefined>(undefined);
+  const dragged = useRef(false);
   const count = slides.length;
 
   useEffect(() => {
@@ -172,14 +196,19 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             drag={count > 1 ? 'x' : false}
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.15}
+            onDragStart={() => {
+              dragged.current = true;
+            }}
             onDragEnd={onDragEnd}
           >
             <SlideImage slide={slide} eager={index === 0} />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a1530]/90 via-[#0a1530]/45 to-[#0a1530]/20 md:bg-gradient-to-r md:from-[#0a1530]/90 md:via-[#0a1530]/50 md:to-[#0a1530]/10" />
+            <SlideLink slide={slide} dragged={dragged} />
             {/* The text block always stops above the slide controls (pb-24), and the
                 headline scales with screen height too, so on short laptop screens it
-                never runs into the counter or arrows. */}
-            <div className="absolute inset-0 flex flex-col justify-end pt-12 pb-24 md:justify-center">
+                never runs into the counter or arrows. Clicks on the text fall through
+                to the slide link; the buttons stay clickable. */}
+            <div className="pointer-events-none absolute inset-0 z-[2] flex flex-col justify-end pt-12 pb-24 md:justify-center">
               <div className="container-page w-full">
                 <div className="max-w-3xl">
                   <p className="eyebrow eyebrow-line !text-gold-400">Mandela Heritage Furniture</p>
@@ -187,7 +216,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                     <Headline text={slide.headline} />
                   </h2>
                   {slide.subtext && <p className="mt-6 max-w-lg text-base text-white/80 sm:text-lg">{slide.subtext}</p>}
-                  <div className="mt-8 flex flex-wrap gap-3">
+                  <div className="pointer-events-auto mt-8 flex flex-wrap gap-3">
                     <Cta slide={slide} />
                     <Link
                       to="/custom-request"

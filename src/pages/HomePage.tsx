@@ -4,7 +4,6 @@ import {
   BenefitStrip,
   CustomCta,
   InteriorInspiration,
-  OffersFeature,
   ProductShelf,
   PromiseSection,
   ShopByCategory,
@@ -23,7 +22,7 @@ import { useSite } from '../state/site';
 /**
  * Home page, top to bottom: hero, service facts, categories, best sellers
  * (or featured pieces until there are enough real orders), new arrivals,
- * offers, rooms, furnishing projects (once published), how ordering works, Google reviews (or delivery fees),
+ * rooms, furnishing projects (once published), how ordering works, Google reviews (or delivery fees),
  * social follow, custom orders and the shop introduction.
  */
 export default function HomePage() {
@@ -83,7 +82,6 @@ export default function HomePage() {
         </p>
       )}
 
-      <OffersFeature products={products} />
       <InteriorInspiration products={products} />
       <RecentProjects />
       <PromiseSection />

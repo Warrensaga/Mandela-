@@ -1,12 +1,10 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import type { CategoryNode, ProductSummary } from '../../lib/api';
-import { isAvailable } from '../../lib/catalog/filters';
 import { formatKES } from '../../lib/format';
 import { whatsappLink } from '../../lib/whatsapp';
 import { useSite } from '../../state/site';
 import { SocialLinks } from '../layout/SocialLinks';
-import { percentOff, ProductCard } from '../product/ProductCard';
 import { ProductGrid } from '../product/ProductGrid';
 import { ButtonAnchor, ButtonLink } from '../ui/Button';
 import { Icon, WhatsAppIcon, type IconName } from '../ui/Icon';
@@ -156,37 +154,6 @@ export function ProductShelf({
       <div className="container-page">
         <SectionHeading id={id} title={title} intro={intro} link={link} />
         <div className="mt-8">{loading ? <GridSkeleton count={4} /> : <ProductGrid products={products} />}</div>
-      </div>
-    </section>
-  );
-}
-
-/**
- * Pieces with an admin-entered compare-at price, on a navy band.
- * Hidden when nothing is on offer. No countdowns or invented urgency.
- */
-export function OffersFeature({ products }: { products: ProductSummary[] }) {
-  const deals = products
-    .filter((p) => isAvailable(p) && percentOff(p.compareAtPrice, p.minPrice))
-    .sort((a, b) => (percentOff(b.compareAtPrice, b.minPrice) ?? 0) - (percentOff(a.compareAtPrice, a.minPrice) ?? 0))
-    .slice(0, 4);
-  if (!deals.length) return null;
-  return (
-    <section aria-labelledby="offers-heading" className="theme-dark section-y">
-      <div className="container-page">
-        <SectionHeading
-          id="offers-heading"
-          title="On offer now"
-          intro="Reduced prices on selected pieces, with the original price shown."
-          link={{ to: '/shop?offers=1', label: 'All offers' }}
-        />
-        <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-4">
-          {deals.map((p, i) => (
-            <Reveal as="li" key={p.id} delay={i * 0.05}>
-              <ProductCard product={p} />
-            </Reveal>
-          ))}
-        </ul>
       </div>
     </section>
   );
